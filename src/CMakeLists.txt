@@ -1,5 +1,6 @@
 set(IOOpenJPH_SRCS
-  itkMinimalStandardRandomVariateGenerator.cxx
+  itkOpenJPHImageIO.cxx
+  itkOpenJPHImageIOFactory.cxx
   )
 
 itk_module_add_library(IOOpenJPH ${IOOpenJPH_SRCS})

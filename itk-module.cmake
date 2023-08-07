@@ -12,14 +12,13 @@ file(READ "${MY_CURRENT_DIR}/README.rst" DOCUMENTATION)
 
 # define the dependencies of the include module and the tests
 itk_module(IOOpenJPH
-  DEPENDS
-    ITKCommon
-    ITKStatistics
-  COMPILE_DEPENDS
-    ITKImageSources
+  PRIVATE_DEPENDS
+    ITKIOImageBase
   TEST_DEPENDS
     ITKTestKernel
-    ITKMetaIO
+    ITKIOMeta
+  FACTORY_NAMES
+    ImageIO::OpenJPH
   DESCRIPTION
     "${DOCUMENTATION}"
   EXCLUDE_FROM_DEFAULT
