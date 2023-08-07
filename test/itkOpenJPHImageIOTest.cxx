@@ -55,10 +55,12 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
 
+  reader->SetImageIO(jphIO);
+  reader->SetFileName(inputFileName);
 
-  // reader->SetImageIO(jphIO);
-  // reader->SetFileName(inputFileName);
-  // // Populate the IO with file's metadata
+  ITK_TEST_EXPECT_TRUE(jphIO->CanReadFile(inputFileName.c_str()));
+
+  // Populate the IO with file's metadata
   // ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateOutputInformation());
   // // Read the file without explicitly requesting OpenJPHIO
   // ITK_TRY_EXPECT_NO_EXCEPTION(image = itk::ReadImage<ImageType>(inputFileName));

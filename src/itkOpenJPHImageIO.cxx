@@ -53,22 +53,10 @@ OpenJPHImageIO::CanReadFile(const char * filename)
 {
   try
   {
+    bool canRead = this->HasSupportedReadExtension(filename);
+
     std::ifstream infile;
     this->OpenFileForReading(infile, filename);
-
-    bool canRead = false;
-    // if (infile.good())
-    // {
-    //   // header is a 512 byte block
-    //   char buffer[512];
-    //   infile.read(buffer, 512);
-    //   if (!infile.bad())
-    //   {
-    //     int fileType = OpenJPHImageIO::CheckVersion(buffer);
-    //     canRead = (fileType > 0);
-    //   }
-    // }
-
     infile.close();
 
     return canRead;
