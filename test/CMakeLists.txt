@@ -11,7 +11,9 @@ itk_add_test(NAME itkOpenJPHImageIOConvertTest
   # --compare
   #     DATA{Baseline/CT1.mha}
   #     ${ITK_TEST_OUTPUT_DIR}/CT1.mha
-    itkOpenJPHImageIOTest
-      DATA{Input/CT1.j2c}
-      ${ITK_TEST_OUTPUT_DIR}/CT1.mha
-  )
+  itkOpenJPHImageIOTest
+    DATA{Input/CT1.j2c}
+    ${ITK_TEST_OUTPUT_DIR}/CT1.mha
+    ${ITK_TEST_OUTPUT_DIR}/CT1Written.j2c
+    ${ITK_TEST_OUTPUT_DIR}/CT1RoundTrip.mha
+)

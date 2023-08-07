@@ -29,15 +29,17 @@
 int
 itkOpenJPHImageIOTest(int argc, char * argv[])
 {
-  if (argc < 3)
+  if (argc < 5)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << std::endl;
-    std::cerr << itkNameOfTestExecutableMacro(argv) << " Input Output [ReUseIO]" << std::endl;
+    std::cerr << itkNameOfTestExecutableMacro(argv) << " InputJ2C Output OutputJ2C OutputRoundTrip" << std::endl;
     return EXIT_FAILURE;
   }
-  const std::string inputFileName = argv[1];
+  const std::string inputJ2CFileName = argv[1];
   const std::string outputFileName = argv[2];
+  const std::string outputJ2CFileName = argv[3];
+  const std::string outputRoundTripFileName = argv[4];
 
   // ATTENTION THIS IS THE PIXEL TYPE FOR
   // THE RESULTING IMAGE
@@ -56,9 +58,10 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
   ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
 
   reader->SetImageIO(jphIO);
-  reader->SetFileName(inputFileName);
+  reader->SetFileName(inputJ2CFileName);
 
-  ITK_TEST_EXPECT_TRUE(jphIO->CanReadFile(inputFileName.c_str()));
+  ITK_TEST_EXPECT_TRUE(jphIO->CanReadFile(inputJ2CFileName.c_str()));
+  ITK_TEST_EXPECT_TRUE(jphIO->CanWriteFile(outputJ2CFileName.c_str()));
 
   // Populate the IO with file's metadata
   // ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateOutputInformation());
