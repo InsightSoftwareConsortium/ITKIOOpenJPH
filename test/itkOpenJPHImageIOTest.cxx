@@ -64,7 +64,7 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
   ITK_TEST_EXPECT_TRUE(jphIO->CanWriteFile(outputJ2CFileName.c_str()));
 
   // Populate the IO with file's metadata
-  // ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateOutputInformation());
+  ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateOutputInformation());
   // // Read the file without explicitly requesting OpenJPHIO
   // ITK_TRY_EXPECT_NO_EXCEPTION(image = itk::ReadImage<ImageType>(inputFileName));
   // itk::MetaDataDictionary & metaData = image->GetMetaDataDictionary(); // Get metadata from regularly read image

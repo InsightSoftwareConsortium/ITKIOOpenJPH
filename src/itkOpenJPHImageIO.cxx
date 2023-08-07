@@ -27,6 +27,8 @@
 #include <algorithm>
 #include <ctime>
 
+#include "OpenJPHInformation.h"
+
 namespace itk
 {
 
@@ -46,6 +48,8 @@ void
 OpenJPHImageIO::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
+  os << indent << "OpenJPH Version: " << GetOpenJPHVersion() << std::endl;
+  os << indent << "SIMD Level: " << GetSIMDLevel() << std::endl;
 }
 
 bool
@@ -263,6 +267,18 @@ OpenJPHImageIO::Write(const void * buffer)
   // }
 
   // outFile.close();
+}
+
+std::string
+OpenJPHImageIO::GetOpenJPHVersion()
+{
+  return OpenJPH::getVersion();
+}
+
+int
+OpenJPHImageIO::GetSIMDLevel()
+{
+  return OpenJPH::getSIMDLevel();
 }
 
 } // end namespace itk

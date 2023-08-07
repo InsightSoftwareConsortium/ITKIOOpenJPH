@@ -1,6 +1,7 @@
 set(IOOpenJPH_SRCS
   itkOpenJPHImageIO.cxx
   itkOpenJPHImageIOFactory.cxx
+  OpenJPHCxx/OpenJPHInformation.cxx
   )
 
 set(OJPH_BUILD_TESTS OFF CACHE BOOL "Build OpenJPH tests")
@@ -25,3 +26,4 @@ unset(_itk_build_shared)
 
 itk_module_add_library(IOOpenJPH ${IOOpenJPH_SRCS})
 target_link_libraries(IOOpenJPH PRIVATE openjph)
+target_include_directories(IOOpenJPH PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/OpenJPHCxx)

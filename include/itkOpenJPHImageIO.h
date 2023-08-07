@@ -124,6 +124,19 @@ public:
     return false;
   }
 
+  /** Get the version of the OpenJPH library. */
+  static std::string GetOpenJPHVersion();
+
+  /** Get the SIMD level:
+   * 0 - no SIMD
+   * 1 - WASM or MMX
+   * 2 - SSE
+   * 3 - SSE2
+   * [...]
+   * 11 - AVX512
+  */
+ static int GetSIMDLevel();
+
 protected:
   OpenJPHImageIO();
   ~OpenJPHImageIO() override;
