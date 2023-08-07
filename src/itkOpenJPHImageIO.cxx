@@ -31,8 +31,9 @@ namespace itk
 {
 
 OpenJPHImageIO::OpenJPHImageIO()
-
 {
+  this->AddSupportedWriteExtension(".j2c");
+  this->AddSupportedReadExtension(".j2c");
 }
 
 

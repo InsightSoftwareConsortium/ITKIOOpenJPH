@@ -8,10 +8,10 @@ CreateTestDriver(IOOpenJPH "${IOOpenJPH-Test_LIBRARIES}" "${IOOpenJPHTests}")
 
 itk_add_test(NAME itkOpenJPHImageIOConvertTest
   COMMAND IOOpenJPHTestDriver
-  --compare
-      # DATA{Baseline/C0004255.mha}
-      ${ITK_TEST_OUTPUT_DIR}/C0004255.mha
+  # --compare
+  #     DATA{Baseline/CT1.mha}
+  #     ${ITK_TEST_OUTPUT_DIR}/CT1.mha
     itkOpenJPHImageIOTest
-      # DATA{Input/C0004255.ISQ}
-      ${ITK_TEST_OUTPUT_DIR}/C0004255.mha
+      DATA{Input/CT1.j2c}
+      ${ITK_TEST_OUTPUT_DIR}/CT1.mha
   )
