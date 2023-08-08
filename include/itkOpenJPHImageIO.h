@@ -146,6 +146,10 @@ public:
   */
  static int GetSIMDLevel();
 
+ /** Set/Get read resolution level. 0 is highest resolution. */
+ itkGetConstMacro(DecompositionLevel, int);
+ itkSetMacro(DecompositionLevel, int);
+
 protected:
   OpenJPHImageIO();
   ~OpenJPHImageIO() override;
@@ -156,6 +160,13 @@ protected:
 private:
   std::unique_ptr<OpenJPH::HTJ2KEncoder> m_Encoder;
   std::unique_ptr<OpenJPH::HTJ2KDecoder> m_Decoder;
+
+  void
+  ReadFile(const std::string & fileName, std::vector<uint8_t> & buffer);
+  void
+  WriteFile(const std::string & fileName, const std::vector<uint8_t> & buffer);
+
+  int m_DecompositionLevel{0};
 };
 } // end namespace itk
 

@@ -55,8 +55,6 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
   using IOType = itk::OpenJPHImageIO;
   IOType::Pointer jphIO = IOType::New();
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
-
   reader->SetImageIO(jphIO);
   reader->SetFileName(inputJ2CFileName);
 
@@ -65,6 +63,9 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
 
   // Populate the IO with file's metadata
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateOutputInformation());
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
+
   // // Read the file without explicitly requesting OpenJPHIO
   // ITK_TRY_EXPECT_NO_EXCEPTION(image = itk::ReadImage<ImageType>(inputFileName));
   // itk::MetaDataDictionary & metaData = image->GetMetaDataDictionary(); // Get metadata from regularly read image

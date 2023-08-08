@@ -24,7 +24,9 @@
 #include "itkByteSwapper.h"
 #include "itkMetaDataObject.h"
 
+#include <fstream>
 #include <algorithm>
+#include <iterator>
 #include <ctime>
 
 #include "ojphInformation.h"
@@ -85,18 +87,16 @@ OpenJPHImageIO::ReadImageInformation()
     itkExceptionMacro("FileName has not been set.");
   }
 
-  std::ifstream infile;
-  this->OpenFileForReading(infile, this->m_FileName);
+  std::vector<uint8_t> & encodedBytes = this->m_Decoder->getEncodedBytes();
+  this->ReadFile(this->m_FileName, encodedBytes);
 
-  // if (fileType == 0)
-  // {
-  //   infile.close();
-  //   itkExceptionMacro("Unrecognized header in: " << m_FileName);
-  // }
 
-  infile.close();
+  this->m_Decoder->readHeader();
 
-  // this->PopulateMetaDataDictionary();
+  const auto size = this->m_Decoder->calculateSizeAtDecompositionLevel(this->m_DecompositionLevel);
+  this->SetDimensions(0, size.width);
+  this->SetDimensions(1, size.height);
+
 }
 
 // void
@@ -276,15 +276,48 @@ OpenJPHImageIO::Write(const void * buffer)
 }
 
 std::string
-OpenJPHImageIO::GetOpenJPHVersion()
+OpenJPHImageIO
+::GetOpenJPHVersion()
 {
   return OpenJPH::getVersion();
 }
 
 int
-OpenJPHImageIO::GetSIMDLevel()
+OpenJPHImageIO
+::GetSIMDLevel()
 {
   return OpenJPH::getSIMDLevel();
+}
+
+void
+OpenJPHImageIO
+::ReadFile(const std::string & fileName, std::vector<uint8_t> & buffer)
+{
+  std::ifstream istrm(fileName, std::ios::in | std::ios::binary);
+  // Stop eating new lines in binary mode!
+  istrm.unsetf(std::ios::skipws);
+
+  std::streampos fileSize;
+  istrm.seekg(0, std::ios::end);
+  fileSize = istrm.tellg();
+  istrm.seekg(0, std::ios::beg);
+
+  // reserve capacity
+  buffer.reserve(fileSize);
+
+  // read the data:
+  buffer.insert(buffer.begin(),
+               std::istream_iterator<uint8_t>(istrm),
+               std::istream_iterator<uint8_t>());
+}
+
+
+void
+OpenJPHImageIO
+::WriteFile(const std::string & fileName, const std::vector<uint8_t> & buffer)
+{
+  std::ofstream ostrm(fileName, std::ios::out | std::ofstream::binary);
+  std::copy(buffer.begin(), buffer.end(), std::ostreambuf_iterator<char>(ostrm));
 }
 
 } // end namespace itk
