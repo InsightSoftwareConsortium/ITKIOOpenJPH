@@ -14,9 +14,9 @@
 #include <ojph_codestream.h>
 
 
-#include "FrameInfo.h"
-#include "Point.h"
-#include "Size.h"
+#include "ojphFrameInfo.h"
+#include "ojphPoint.h"
+#include "ojphSize.h"
 
 namespace OpenJPH {
 

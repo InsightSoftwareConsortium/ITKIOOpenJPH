@@ -1,7 +1,7 @@
 // Copyright (c) Chris Hafey.
 // SPDX-License-Identifier: MIT
 
-#include "OpenJPHInformation.h"
+#include "ojphInformation.h"
 #include "ojph_defs.h"
 #include "ojph_version.h"
 

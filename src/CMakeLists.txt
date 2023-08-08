@@ -1,7 +1,7 @@
 set(IOOpenJPH_SRCS
   itkOpenJPHImageIO.cxx
   itkOpenJPHImageIOFactory.cxx
-  OpenJPHCxx/OpenJPHInformation.cxx
+  OpenJPHCxx/ojphInformation.cxx
   )
 
 set(OJPH_BUILD_TESTS OFF CACHE BOOL "Build OpenJPH tests")

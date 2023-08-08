@@ -27,9 +27,9 @@
 #include <algorithm>
 #include <ctime>
 
-#include "OpenJPHInformation.h"
-#include "HTJ2KEncoder.h"
-#include "HTJ2KDecoder.h"
+#include "ojphInformation.h"
+#include "ojphHTJ2KEncoder.h"
+#include "ojphHTJ2KDecoder.h"
 
 namespace itk
 {
