@@ -26,45 +26,19 @@
 
 #define SPECIFIC_IMAGEIO_MODULE_TEST
 
+template <typename TPixel>
 int
-itkOpenJPHImageIOTest(int argc, char * argv[])
+testPixelType(const std::string & inputJ2CFileName, const std::string & outputFileName, const std::string & outputJ2CFileName, const std::string & outputRoundTripFileName)
 {
-  if (argc < 5)
-  {
-    std::cerr << "Missing parameters." << std::endl;
-    std::cerr << "Usage: " << std::endl;
-    std::cerr << itkNameOfTestExecutableMacro(argv) << " InputJ2C Output OutputJ2C OutputRoundTrip" << std::endl;
-    return EXIT_FAILURE;
-  }
-  const std::string inputJ2CFileName = argv[1];
-  const std::string outputFileName = argv[2];
-  const std::string outputJ2CFileName = argv[3];
-  const std::string outputRoundTripFileName = argv[4];
-
-  // ATTENTION THIS IS THE PIXEL TYPE FOR
-  // THE RESULTING IMAGE
   constexpr unsigned int Dimension = 2;
-  using PixelType = short;
+  using PixelType = TPixel;
   using ImageType = itk::Image<PixelType, Dimension>;
-  ImageType::Pointer image;
+  typename ImageType::Pointer image;
 
   using ReaderType = itk::ImageFileReader<ImageType>;
-  ReaderType::Pointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
 
   itk::OpenJPHImageIOFactory::RegisterOneFactory();
-  using IOType = itk::OpenJPHImageIO;
-  IOType::Pointer jphIO = IOType::New();
-
-  reader->SetImageIO(jphIO);
-  reader->SetFileName(inputJ2CFileName);
-
-  ITK_TEST_EXPECT_TRUE(jphIO->CanReadFile(inputJ2CFileName.c_str()));
-  ITK_TEST_EXPECT_TRUE(jphIO->CanWriteFile(outputJ2CFileName.c_str()));
-
-  // Populate the IO with file's metadata
-  ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateOutputInformation());
-
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
 
   // Read the file without explicitly requesting OpenJPHIO
   ITK_TRY_EXPECT_NO_EXCEPTION(image = itk::ReadImage<ImageType>(inputJ2CFileName));
@@ -88,4 +62,54 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
 
   std::cout << "Test finished" << std::endl;
   return EXIT_SUCCESS;
+}
+
+int
+itkOpenJPHImageIOTest(int argc, char * argv[])
+{
+  if (argc < 5)
+  {
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << itkNameOfTestExecutableMacro(argv) << " InputJ2C Output OutputJ2C OutputRoundTrip" << std::endl;
+    return EXIT_FAILURE;
+  }
+  const std::string inputJ2CFileName = argv[1];
+  const std::string outputFileName = argv[2];
+  const std::string outputJ2CFileName = argv[3];
+  const std::string outputRoundTripFileName = argv[4];
+
+  using IOType = itk::OpenJPHImageIO;
+  IOType::Pointer jphIO = IOType::New();
+
+  ITK_TEST_EXPECT_TRUE(jphIO->CanReadFile(inputJ2CFileName.c_str()));
+  ITK_TEST_EXPECT_TRUE(jphIO->CanWriteFile(outputJ2CFileName.c_str()));
+  jphIO->SetFileName(inputJ2CFileName);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(jphIO->ReadImageInformation());
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
+
+  auto componentType = jphIO->GetComponentType();
+
+  switch (componentType)
+  {
+    case itk::ImageIOBase::IOComponentEnum::UCHAR:
+      return testPixelType<unsigned char>(inputJ2CFileName, outputFileName, outputJ2CFileName, outputRoundTripFileName);
+      break;
+    case itk::ImageIOBase::IOComponentEnum::CHAR:
+      return testPixelType<char>(inputJ2CFileName, outputFileName, outputJ2CFileName, outputRoundTripFileName);
+      break;
+    case itk::ImageIOBase::IOComponentEnum::USHORT:
+      return testPixelType<unsigned short>(inputJ2CFileName, outputFileName, outputJ2CFileName, outputRoundTripFileName);
+      break;
+    case itk::ImageIOBase::IOComponentEnum::SHORT:
+      return testPixelType<short>(inputJ2CFileName, outputFileName, outputJ2CFileName, outputRoundTripFileName);
+      break;
+    default:
+      std::cerr << "Unsupported input image pixel component type: ";
+      std::cerr << itk::ImageIOBase::GetComponentTypeAsString(componentType);
+      std::cerr << std::endl;
+      return EXIT_FAILURE;
+  }
 }
