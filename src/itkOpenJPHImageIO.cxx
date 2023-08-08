@@ -125,6 +125,17 @@ OpenJPHImageIO::ReadImageInformation()
     itkExceptionMacro("OpenJPHImageIO only supports 8 and 16 bit images.");
   }
 
+  if (frameInfo.componentCount == 1)
+  {
+    this->SetNumberOfComponents(1);
+    this->SetPixelType(IOPixelEnum::SCALAR);
+  }
+  else
+  {
+    this->SetNumberOfComponents(frameInfo.componentCount);
+    this->SetPixelType(IOPixelEnum::VARIABLELENGTHVECTOR);
+  }
+
 }
 
 // void
