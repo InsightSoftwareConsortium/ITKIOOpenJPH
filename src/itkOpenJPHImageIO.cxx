@@ -97,6 +97,34 @@ OpenJPHImageIO::ReadImageInformation()
   this->SetDimensions(0, size.width);
   this->SetDimensions(1, size.height);
 
+  const auto frameInfo = this->m_Decoder->getFrameInfo();
+  if (frameInfo.bitsPerSample <= 8)
+  {
+    if (frameInfo.isSigned)
+    {
+      this->SetComponentType(IOComponentEnum::CHAR);
+    }
+    else
+    {
+      this->SetComponentType(IOComponentEnum::UCHAR);
+    }
+  }
+  else if (frameInfo.bitsPerSample <= 16)
+  {
+    if (frameInfo.isSigned)
+    {
+      this->SetComponentType(IOComponentEnum::SHORT);
+    }
+    else
+    {
+      this->SetComponentType(IOComponentEnum::USHORT);
+    }
+  }
+  else
+  {
+    itkExceptionMacro("OpenJPHImageIO only supports 8 and 16 bit images.");
+  }
+
 }
 
 // void
