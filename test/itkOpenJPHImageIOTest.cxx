@@ -66,120 +66,12 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(jphIO, OpenJPHImageIO, ImageIOBase);
 
-  // // Read the file without explicitly requesting OpenJPHIO
-  // ITK_TRY_EXPECT_NO_EXCEPTION(image = itk::ReadImage<ImageType>(inputFileName));
-  // itk::MetaDataDictionary & metaData = image->GetMetaDataDictionary(); // Get metadata from regularly read image
+  // Read the file without explicitly requesting OpenJPHIO
+  ITK_TRY_EXPECT_NO_EXCEPTION(image = itk::ReadImage<ImageType>(inputJ2CFileName));
+  image->Print(std::cout);
+  itk::MetaDataDictionary & metaData = image->GetMetaDataDictionary(); // Get metadata from regularly read image
 
-  // std::cout << "Version: \t\t" << jphIO->GetVersion() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetVersion(), std::string("CTDATA-HEADER_V1"));
-  // std::string stringMeta;
-  // itk::ExposeMetaData<std::string>(metaData, "Version", stringMeta);
-  // ITK_TEST_EXPECT_EQUAL(stringMeta, std::string("CTDATA-HEADER_V1"));
-  // std::cout << "PatientIndex: \t" << jphIO->GetPatientIndex() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetPatientIndex(), 78);
-  // int intMeta;
-  // itk::ExposeMetaData<int>(metaData, "PatientIndex", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 78);
-  // std::cout << "ScannerID: \t\t" << jphIO->GetScannerID() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetScannerID(), 2135);
-  // itk::ExposeMetaData<int>(metaData, "ScannerID", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 2135);
-  // std::cout << "SliceThickness: \t" << jphIO->GetSliceThickness() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetSliceThickness(), 0.036, 6, 1e-3));
-  // double doubleMeta;
-  // itk::ExposeMetaData<double>(metaData, "SliceThickness", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 0.036, 6, 1e-3));
-  // std::cout << "SliceIncrement: \t" << jphIO->GetSliceIncrement() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetSliceIncrement(), 0.036, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "SliceIncrement", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 0.036, 6, 1e-3));
-  // std::cout << "StartPosition: \t" << jphIO->GetStartPosition() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetStartPosition(), 75.0, 6, 1e-3));
-  // std::vector<double> vectorDoubleMeta;
-  // itk::ExposeMetaData<std::vector<double>>(metaData, "DataRange", vectorDoubleMeta);
-  // std::cout << "DataRange[0]: \t" << jphIO->GetDataRange()[0] << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetDataRange()[0], -2813.0, 6, 1e-3));
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(vectorDoubleMeta[0], -2813.0, 6, 1e-3));
-  // std::cout << "DataRange[1]: \t" << jphIO->GetDataRange()[1] << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetDataRange()[1], 32767.0, 6, 1e-3));
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(vectorDoubleMeta[1], 32767.0, 6, 1e-3));
-  // std::cout << "MuScaling: \t\t" << jphIO->GetMuScaling() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetMuScaling(), 4096.0, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "MuScaling", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 4096.0, 6, 1e-3));
-  // std::cout << "MuWater: \t\t" << jphIO->GetMuWater() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetMuWater(), 0.7033, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "MuWater", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 0.7033, 6, 1e-3));
-  // std::cout << "RescaleType: \t\t" << jphIO->GetRescaleType() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetRescaleType(), 2);
-  // itk::ExposeMetaData<int>(metaData, "RescaleType", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 2);
-  // std::cout << "RescaleSlope: \t\t" << jphIO->GetRescaleSlope() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetRescaleSlope(), 0.347136, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "RescaleSlope", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 0.347136, 6, 1e-3));
-  // std::cout << "RescaleIntercept: \t\t" << jphIO->GetRescaleIntercept() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetRescaleIntercept(), -1000.0, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "RescaleIntercept", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, -1000.0, 6, 1e-3));
-  // std::cout << "RescaleUnits: \t\t" << jphIO->GetRescaleUnits() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetRescaleUnits(), std::string("mg HA/ccm"));
-  // itk::ExposeMetaData<std::string>(metaData, "RescaleUnits", stringMeta);
-  // ITK_TEST_EXPECT_EQUAL(stringMeta, std::string("mg HA/ccm"));
-  // std::cout << "CalibrationData: \t\t" << jphIO->GetCalibrationData() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetCalibrationData(),
-  //                       std::string("45 kVp, 0.5mm Al, BH: 1200mg HA/ccm, Scaling 4096"));
-  // itk::ExposeMetaData<std::string>(metaData, "CalibrationData", stringMeta);
-  // ITK_TEST_EXPECT_EQUAL(stringMeta, std::string("45 kVp, 0.5mm Al, BH: 1200mg HA/ccm, Scaling 4096"));
-  // std::cout << "NumberOfSamples: \t" << jphIO->GetNumberOfSamples() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetNumberOfSamples(), 1024);
-  // itk::ExposeMetaData<int>(metaData, "NumberOfSamples", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 1024);
-  // std::cout << "NumberOfProjections: " << jphIO->GetNumberOfProjections() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetNumberOfProjections(), 500);
-  // itk::ExposeMetaData<int>(metaData, "NumberOfProjections", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 500);
-  // std::cout << "ScanDistance: \t" << jphIO->GetScanDistance() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetScanDistance(), 36.864, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "ScanDistance", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 36.864, 6, 1e-3));
-  // std::cout << "ScannerType: \t" << jphIO->GetScannerType() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetScannerType(), 10);
-  // itk::ExposeMetaData<int>(metaData, "ScannerType", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 10);
-  // std::cout << "SampleTime: \t\t" << jphIO->GetSampleTime() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetSampleTime(), 400.0, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "SampleTime", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 400.0, 6, 1e-3));
-  // std::cout << "MeasurementIndex: \t" << jphIO->GetMeasurementIndex() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetMeasurementIndex(), 4937);
-  // itk::ExposeMetaData<int>(metaData, "MeasurementIndex", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 4937);
-  // std::cout << "Site: \t\t" << jphIO->GetSite() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetSite(), 5);
-  // itk::ExposeMetaData<int>(metaData, "Site", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 5);
-  // std::cout << "ReferenceLine: \t" << jphIO->GetReferenceLine() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetReferenceLine(), 0);
-  // itk::ExposeMetaData<double>(metaData, "ReferenceLine", doubleMeta);
-  // ITK_TEST_EXPECT_EQUAL(doubleMeta, 0);
-  // std::cout << "ReconstructionAlg: \t" << jphIO->GetReconstructionAlg() << std::endl;
-  // ITK_TEST_EXPECT_EQUAL(jphIO->GetReconstructionAlg(), 3);
-  // itk::ExposeMetaData<int>(metaData, "ReconstructionAlg", intMeta);
-  // ITK_TEST_EXPECT_EQUAL(intMeta, 3);
-  // std::cout << "Energy: \t\t" << jphIO->GetEnergy() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetEnergy(), 45.0, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "Energy", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 45.0, 6, 1e-3));
-  // std::cout << "Intensity: \t\t" << jphIO->GetIntensity() << std::endl;
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(jphIO->GetIntensity(), 0.177, 6, 1e-3));
-  // itk::ExposeMetaData<double>(metaData, "Intensity", doubleMeta);
-  // ITK_TEST_EXPECT_TRUE(itk::Math::FloatAlmostEqual(doubleMeta, 0.177, 6, 1e-3));
-  // std::cout << "CreationDate: \t" << jphIO->GetCreationDate() << std::endl;
-  // std::cout << "ModificationDate: \t" << jphIO->GetModificationDate() << std::endl;
-
-  // itk::EncapsulateMetaData<std::string>(metaData, "PatientName", std::string("Zukic"));
+  ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(image, outputFileName));
 
   // using WriterType = itk::ImageFileWriter<ImageType>;
   // WriterType::Pointer writer = WriterType::New();
@@ -193,7 +85,6 @@ itkOpenJPHImageIOTest(int argc, char * argv[])
   // writer->SetInput(image);
   // writer->SetFileName(outputFileName);
   // ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
-
 
   std::cout << "Test finished" << std::endl;
   return EXIT_SUCCESS;

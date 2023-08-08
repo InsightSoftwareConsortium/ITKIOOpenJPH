@@ -142,28 +142,28 @@ OpenJPHImageIO::ReadImageInformation()
   MetaDataDictionary & thisDic = this->GetMetaDataDictionary();
   // Number of wavelet decompositions
   EncapsulateMetaData<int>(thisDic, "NumberOfDecompositions", this->m_Decoder->getNumDecompositions());
-  EncapsulateMetaData<bool>(thisDic, "IsReversible", this->m_Decoder->getIsReversible());
-  EncapsulateMetaData<bool>(thisDic, "ProgressionOrder", this->m_Decoder->getProgressionOrder());
+  EncapsulateMetaData<int>(thisDic, "IsReversible", this->m_Decoder->getIsReversible());
+  EncapsulateMetaData<int>(thisDic, "ProgressionOrder", this->m_Decoder->getProgressionOrder());
 
-  std::vector<uint32_t> tileSize(2);
+  Array<unsigned int> tileSize(2);
   tileSize[0] = this->m_Decoder->getTileSize().width;
   tileSize[1] = this->m_Decoder->getTileSize().height;
   EncapsulateMetaData<decltype(tileSize)>(thisDic, "TileSize" , tileSize);
 
-  std::vector<uint32_t> tileOffset(2);
+  Array<unsigned int> tileOffset(2);
   tileOffset[0] = this->m_Decoder->getTileOffset().x;
   tileOffset[1] = this->m_Decoder->getTileOffset().y;
   EncapsulateMetaData<decltype(tileOffset)>(thisDic, "TileOffset" , tileOffset);
 
-  std::vector<uint32_t> blockDimensions(2);
+  Array<unsigned int> blockDimensions(2);
   blockDimensions[0] = this->m_Decoder->getBlockDimensions().width;
   blockDimensions[1] = this->m_Decoder->getBlockDimensions().height;
   EncapsulateMetaData<decltype(blockDimensions)>(thisDic, "BlockDimensions" , blockDimensions);
 
-  const auto numberOfLayers = this->m_Decoder->getNumLayers();
+  const int numberOfLayers = this->m_Decoder->getNumLayers();
   EncapsulateMetaData<decltype(numberOfLayers)>(thisDic, "NumberOfLayers" , numberOfLayers);
 
-  const auto isUsingColorTransform = this-m_Decoder->getIsUsingColorTransform();
+  const int isUsingColorTransform = this->m_Decoder->getIsUsingColorTransform();
   EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "IsUsingColorTransform" , isUsingColorTransform);
 }
 
