@@ -171,6 +171,14 @@ OpenJPHImageIO::ReadImageInformation()
 void
 OpenJPHImageIO::Read(void * buffer)
 {
+  std::vector<uint8_t> & encodedBytes = this->m_Decoder->getEncodedBytes();
+  this->ReadFile(this->m_FileName, encodedBytes);
+
+  this->m_Decoder->decode();
+
+  const std::vector<uint8_t> & decodedBytes = this->m_Decoder->getDecodedBytes();
+
+  std::memcpy(buffer, decodedBytes.data(), decodedBytes.size());
 }
 
 
@@ -274,8 +282,8 @@ OpenJPHImageIO
 
   // read the data:
   buffer.insert(buffer.begin(),
-               std::istream_iterator<uint8_t>(istrm),
-               std::istream_iterator<uint8_t>());
+                std::istream_iterator<uint8_t>(istrm),
+                std::istream_iterator<uint8_t>());
 }
 
 
