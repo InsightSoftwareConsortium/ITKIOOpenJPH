@@ -5,7 +5,7 @@ set(IOOpenJPH_SRCS
   )
 
 set(OJPH_BUILD_TESTS OFF CACHE BOOL "Build OpenJPH tests")
-if(EMSCRIPTEN OR WASI)
+if(EMSCRIPTEN OR WASI OR CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm.*|ARM.*|aarch64.*|AARCH64)")
   set(OJPH_DISABLE_INTEL_SIMD ON CACHE BOOL "Disables the use of SIMD instruction as associated files")
   set(OJPH_ENABLE_INTEL_AVX512 OFF CACHE BOOL "Enables the use of AVX512 SIMD instructions and associated files")
 endif()
