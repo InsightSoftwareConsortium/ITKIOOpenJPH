@@ -28,12 +28,18 @@
 #include <ctime>
 
 #include "OpenJPHInformation.h"
+#include "HTJ2KEncoder.h"
+#include "HTJ2KDecoder.h"
 
 namespace itk
 {
 
 OpenJPHImageIO::OpenJPHImageIO()
 {
+  this->m_Encoder = std::make_unique<OpenJPH::HTJ2KEncoder>();
+  this->m_Decoder = std::make_unique<OpenJPH::HTJ2KDecoder>();
+
+  this->SetNumberOfDimensions(2);
   this->AddSupportedWriteExtension(".j2c");
   this->AddSupportedReadExtension(".j2c");
 }

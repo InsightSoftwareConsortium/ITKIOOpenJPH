@@ -19,9 +19,16 @@
 #define itkOpenJPHImageIO_h
 #include "IOOpenJPHExport.h"
 
-
 #include <fstream>
+#include <memory>
+
 #include "itkImageIOBase.h"
+
+namespace OpenJPH
+{
+class HTJ2KDecoder;
+class HTJ2KEncoder;
+}
 
 namespace itk
 {
@@ -115,12 +122,14 @@ public:
   bool
   CanStreamRead() override
   {
+    // Todo: stream tiles
     return false;
   }
 
   bool
   CanStreamWrite() override
   {
+    // Todo: stream tiles
     return false;
   }
 
@@ -145,6 +154,8 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
+  std::unique_ptr<OpenJPH::HTJ2KEncoder> m_Encoder;
+  std::unique_ptr<OpenJPH::HTJ2KDecoder> m_Decoder;
 };
 } // end namespace itk
 
