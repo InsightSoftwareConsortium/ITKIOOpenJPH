@@ -188,7 +188,7 @@ public:
   itkGetConstReferenceMacro(BlockDimensions, JPHSizeType);
   itkSetMacro(BlockDimensions, JPHSizeType);
 
-  /** Set/Get whether or not the color transform is used. */
+  /** Set/Get whether or not the RGB to YUV color transform is used. */
   itkGetConstMacro(UseColorTransform, bool);
   itkSetMacro(UseColorTransform, bool);
   itkBooleanMacro(UseColorTransform);

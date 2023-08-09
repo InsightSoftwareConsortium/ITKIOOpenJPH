@@ -32,6 +32,9 @@ public:
                    lossless_(true),
                    quantizationStep_(-1.0),
                    progressionOrder_(2), // RPCL
+                   imageOffset_(0, 0),
+                   tileOffset_(0, 0),
+                   tileSize_(512, 512),
                    blockDimensions_(64, 64)
   {
   }
@@ -268,7 +271,7 @@ private:
   Point tileOffset_;
   Size blockDimensions_;
   std::vector<Size> precincts_;
-  bool isUsingColorTransform_;
+  bool isUsingColorTransform_{false};
 };
 
 } // end namespace OpenJPH

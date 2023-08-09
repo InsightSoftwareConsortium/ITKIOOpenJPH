@@ -251,7 +251,6 @@ OpenJPHImageIO::WriteImageInformation()
   this->m_Encoder->setBlockDimensions(blockDimensions);
 
   this->m_Encoder->setIsUsingColorTransform(this->GetUseColorTransform());
-
 }
 
 std::vector<uint8_t> &
@@ -293,19 +292,18 @@ OpenJPHImageIO::GetDecodedBytes()
 }
 
 
-
 void
 OpenJPHImageIO::Write(const void * buffer)
 {
   this->WriteImageInformation();
   std::vector<uint8_t> & decodedBytes = this->GetDecodedBytes();
-  decodedBytes.resize(this->GetImageSizeInBytes());
 
+  decodedBytes.resize(this->GetImageSizeInBytes());
   std::memcpy(decodedBytes.data(), buffer, decodedBytes.size());
 
   this->m_Encoder->encode();
 
-  this->WriteFile(this->m_FileName, decodedBytes);
+  this->WriteFile(this->m_FileName, this->m_Encoder->getEncodedBytes());
 }
 
 std::string
