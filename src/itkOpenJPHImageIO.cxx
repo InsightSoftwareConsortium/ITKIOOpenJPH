@@ -281,11 +281,14 @@ OpenJPHImageIO::GetDecodedBytes()
       itkExceptionMacro("OpenJPHImageIO only supports 8 and 16 bit images.");
   }
 
+  const auto width = static_cast<uint16_t>(this->GetDimensions(0));
+  const auto height = static_cast<uint16_t>(this->GetDimensions(1));
+  const auto numberOfComponents = static_cast<uint8_t>(this->GetNumberOfComponents());
   OpenJPH::FrameInfo frameInfo{
-    .width = static_cast<uint16_t>(this->GetDimensions(0)),
-    .height = static_cast<uint16_t>(this->GetDimensions(1)),
+    .width = width,
+    .height = height,
     .bitsPerSample = bitsPerSample,
-    .componentCount = static_cast<uint8_t>(this->GetNumberOfComponents()),
+    .componentCount = numberOfComponents,
     .isSigned = isSigned,
   };
   return this->m_Encoder->getDecodedBytes(frameInfo);
