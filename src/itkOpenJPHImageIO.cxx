@@ -46,8 +46,8 @@ OpenJPHImageIO::OpenJPHImageIO()
   this->AddSupportedReadExtension(".j2c");
 
   m_TileSize.SetSize(2);
-  m_TileSize[0] = 256;
-  m_TileSize[1] = 256;
+  m_TileSize[0] = 512;
+  m_TileSize[1] = 512;
 
   m_TileOffset.SetSize(2);
   m_TileOffset[0] = 0;
@@ -160,20 +160,20 @@ OpenJPHImageIO::ReadHeader()
   MetaDataDictionary & thisDic = this->GetMetaDataDictionary();
   // Number of wavelet decompositions
   EncapsulateMetaData<int>(thisDic, "NumberOfDecompositions", this->m_Decoder->getNumDecompositions());
-  EncapsulateMetaData<int>(thisDic, "IsReversible", this->m_Decoder->getIsReversible());
+  EncapsulateMetaData<bool>(thisDic, "IsReversible", this->m_Decoder->getIsReversible());
   EncapsulateMetaData<int>(thisDic, "ProgressionOrder", this->m_Decoder->getProgressionOrder());
 
-  Array<unsigned int> tileSize(2);
+  std::vector<double> tileSize(2);
   tileSize[0] = this->m_Decoder->getTileSize().width;
   tileSize[1] = this->m_Decoder->getTileSize().height;
   EncapsulateMetaData<decltype(tileSize)>(thisDic, "TileSize" , tileSize);
 
-  Array<unsigned int> tileOffset(2);
+  std::vector<double> tileOffset(2);
   tileOffset[0] = this->m_Decoder->getTileOffset().x;
   tileOffset[1] = this->m_Decoder->getTileOffset().y;
   EncapsulateMetaData<decltype(tileOffset)>(thisDic, "TileOffset" , tileOffset);
 
-  Array<unsigned int> blockDimensions(2);
+  std::vector<double> blockDimensions(2);
   blockDimensions[0] = this->m_Decoder->getBlockDimensions().width;
   blockDimensions[1] = this->m_Decoder->getBlockDimensions().height;
   EncapsulateMetaData<decltype(blockDimensions)>(thisDic, "BlockDimensions" , blockDimensions);
@@ -181,7 +181,7 @@ OpenJPHImageIO::ReadHeader()
   const int numberOfLayers = this->m_Decoder->getNumLayers();
   EncapsulateMetaData<decltype(numberOfLayers)>(thisDic, "NumberOfLayers" , numberOfLayers);
 
-  const int isUsingColorTransform = this->m_Decoder->getIsUsingColorTransform();
+  const bool isUsingColorTransform = this->m_Decoder->getIsUsingColorTransform();
   EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "UseColorTransform" , isUsingColorTransform);
 }
 

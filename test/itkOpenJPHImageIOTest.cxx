@@ -45,7 +45,15 @@ testPixelType(const std::string & inputJ2CFileName, const std::string & outputFi
   image->Print(std::cout);
   itk::MetaDataDictionary & metaData = image->GetMetaDataDictionary(); // Get metadata from regularly read image
 
-  ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(image, outputFileName));
+  int numberOfDecompositions = 0;
+  itk::ExposeMetaData<int>(metaData, "NumberOfDecompositions", numberOfDecompositions);
+  ITK_TEST_EXPECT_EQUAL(numberOfDecompositions, 5);
+
+  bool isReversible = false;
+  itk::ExposeMetaData<bool>(metaData, "IsReversible", isReversible);
+  ITK_TEST_EXPECT_EQUAL(isReversible, true);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(image, outputFileName, true));
 
   typename ImageType::Pointer writtenImage;
   ITK_TRY_EXPECT_NO_EXCEPTION(writtenImage = itk::ReadImage<ImageType>(outputFileName));
@@ -65,6 +73,8 @@ testPixelType(const std::string & inputJ2CFileName, const std::string & outputFi
 
   typename ImageType::Pointer writtenImageBack;
   ITK_TRY_EXPECT_NO_EXCEPTION(writtenImageBack = itk::ReadImage<ImageType>(outputJ2CFileName));
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(writtenImageBack, outputRoundTripFileName, true));
 
   std::cout << "Test finished" << std::endl;
   return EXIT_SUCCESS;
