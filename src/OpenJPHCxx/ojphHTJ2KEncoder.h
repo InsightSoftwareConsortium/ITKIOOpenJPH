@@ -43,6 +43,7 @@ public:
   std::vector<uint8_t> &getDecodedBytes(const FrameInfo &frameInfo)
   {
     frameInfo_ = frameInfo;
+    downSamples_.resize(frameInfo_.componentCount);
     for (int c = 0; c < frameInfo_.componentCount; ++c)
     {
       downSamples_[c].x = 1;

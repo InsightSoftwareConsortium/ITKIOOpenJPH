@@ -144,11 +144,55 @@ public:
    * [...]
    * 11 - AVX512
   */
- static int GetSIMDLevel();
+  static int GetSIMDLevel();
 
- /** Set/Get read resolution level. 0 is highest resolution. */
- itkGetConstMacro(DecompositionLevel, int);
- itkSetMacro(DecompositionLevel, int);
+  /** Set/Get read resolution level. 0 is highest resolution. */
+  itkGetConstMacro(DecompositionLevel, int);
+  itkSetMacro(DecompositionLevel, int);
+
+  /** Set/Get the number of wavelet decompositions. */
+  itkGetConstMacro(Decompositions, size_t);
+  itkSetMacro(Decompositions, size_t);
+
+  /** Set/Get whether encoding is reversible, i.e. lossless */
+  itkGetConstMacro(IsReversible, bool);
+  itkSetMacro(IsReversible, bool);
+  itkBooleanMacro(IsReversible);
+
+  /** Set/Get the lossy quantization. Ignore if IsReversible is true. */
+  itkGetConstMacro(QuantizationStep, float);
+  itkSetMacro(QuantizationStep, float);
+
+  /** Set/Get the progression order.
+   * 0 = LRCP
+   * 1 = RLCP
+   * 2 = RPCL
+   * 3 = PCRL
+   * 4 = CPRL
+  **/
+  itkGetConstMacro(ProgressionOrder, int);
+  itkSetMacro(ProgressionOrder, int);
+
+  using JPHSizeType = Array<uint32_t>;
+  using JPHPointType = JPHSizeType;
+
+  /** Set/Get the tile size. */
+  itkGetConstReferenceMacro(TileSize, JPHSizeType);
+  itkSetMacro(TileSize, JPHSizeType);
+
+  /** Set/Get the tile offset. */
+  itkGetConstReferenceMacro(TileOffset, JPHPointType);
+  itkSetMacro(TileOffset, JPHPointType);
+
+  /** Set/Get the block dimensions. */
+  itkGetConstReferenceMacro(BlockDimensions, JPHSizeType);
+  itkSetMacro(BlockDimensions, JPHSizeType);
+
+  /** Set/Get whether or not the color transform is used. */
+  itkGetConstMacro(UseColorTransform, bool);
+  itkSetMacro(UseColorTransform, bool);
+  itkBooleanMacro(UseColorTransform);
+
 
 protected:
   OpenJPHImageIO();
@@ -166,7 +210,22 @@ private:
   void
   WriteFile(const std::string & fileName, const std::vector<uint8_t> & buffer);
 
+  void
+  ReadHeader();
+
+  std::vector<uint8_t> &
+  GetDecodedBytes();
+
   int m_DecompositionLevel{0};
+
+  size_t m_Decompositions{5};
+  bool m_IsReversible{true};
+  float m_QuantizationStep{-1.0};
+  int m_ProgressionOrder{2}; // RPCL
+  JPHSizeType m_TileSize;
+  JPHPointType m_TileOffset;
+  JPHSizeType m_BlockDimensions;
+  bool m_UseColorTransform{false};
 };
 } // end namespace itk
 

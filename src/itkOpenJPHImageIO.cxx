@@ -44,6 +44,18 @@ OpenJPHImageIO::OpenJPHImageIO()
   this->SetNumberOfDimensions(2);
   this->AddSupportedWriteExtension(".j2c");
   this->AddSupportedReadExtension(".j2c");
+
+  m_TileSize.SetSize(2);
+  m_TileSize[0] = 256;
+  m_TileSize[1] = 256;
+
+  m_TileOffset.SetSize(2);
+  m_TileOffset[0] = 0;
+  m_TileOffset[1] = 0;
+
+  m_BlockDimensions.SetSize(2);
+  m_BlockDimensions[0] = 64;
+  m_BlockDimensions[1] = 64;
 }
 
 
@@ -92,6 +104,12 @@ OpenJPHImageIO::ReadImageInformation()
 
   this->m_Decoder->readHeader();
 
+  this->ReadHeader();
+}
+
+void
+OpenJPHImageIO::ReadHeader()
+{
   const auto size = this->m_Decoder->calculateSizeAtDecompositionLevel(this->m_DecompositionLevel);
   this->SetDimensions(0, size.width);
   this->SetDimensions(1, size.height);
@@ -164,7 +182,7 @@ OpenJPHImageIO::ReadImageInformation()
   EncapsulateMetaData<decltype(numberOfLayers)>(thisDic, "NumberOfLayers" , numberOfLayers);
 
   const int isUsingColorTransform = this->m_Decoder->getIsUsingColorTransform();
-  EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "IsUsingColorTransform" , isUsingColorTransform);
+  EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "UseColorTransform" , isUsingColorTransform);
 }
 
 
@@ -175,6 +193,8 @@ OpenJPHImageIO::Read(void * buffer)
   this->ReadFile(this->m_FileName, encodedBytes);
 
   this->m_Decoder->decode();
+
+  this->ReadHeader();
 
   const std::vector<uint8_t> & decodedBytes = this->m_Decoder->getDecodedBytes();
 
@@ -204,50 +224,88 @@ OpenJPHImageIO::WriteImageInformation()
     itkExceptionMacro("FileName has not been set.");
   }
 
-  std::ofstream outFile;
-  this->OpenFileForWriting(outFile, m_FileName);
+  this->GetDecodedBytes();
 
-  // this->WriteISQHeader(&outFile);
+  this->m_Encoder->setDecompositions(this->GetDecompositions());
+  this->m_Encoder->setQuality(this->GetIsReversible(), this->GetQuantizationStep());
+  this->m_Encoder->setProgressionOrder(this->GetProgressionOrder());
 
-  outFile.close();
+  OpenJPH::Point offset;
+  offset.x = this->GetOrigin(0);
+  offset.y = this->GetOrigin(1);
+  this->m_Encoder->setImageOffset(offset);
+
+  OpenJPH::Size tileSize;
+  tileSize.width = this->GetTileSize()[0];
+  tileSize.height = this->GetTileSize()[1];
+  this->m_Encoder->setTileSize(tileSize);
+
+  OpenJPH::Point tileOffset;
+  tileOffset.x = this->GetTileOffset()[0];
+  tileOffset.y = this->GetTileOffset()[1];
+  this->m_Encoder->setTileOffset(tileOffset);
+
+  OpenJPH::Size blockDimensions;
+  blockDimensions.width = this->GetBlockDimensions()[0];
+  blockDimensions.height = this->GetBlockDimensions()[1];
+  this->m_Encoder->setBlockDimensions(blockDimensions);
+
+  this->m_Encoder->setIsUsingColorTransform(this->GetUseColorTransform());
+
 }
+
+std::vector<uint8_t> &
+OpenJPHImageIO::GetDecodedBytes()
+{
+  uint8_t bitsPerSample;
+  bool isSigned;
+  const auto componentType = this->GetComponentType();
+  switch (componentType)
+  {
+    case IOComponentEnum::CHAR:
+      bitsPerSample = 8;
+      isSigned = true;
+      break;
+    case IOComponentEnum::UCHAR:
+      bitsPerSample = 8;
+      isSigned = false;
+      break;
+    case IOComponentEnum::SHORT:
+      bitsPerSample = 16;
+      isSigned = true;
+      break;
+    case IOComponentEnum::USHORT:
+      bitsPerSample = 16;
+      isSigned = false;
+      break;
+    default:
+      itkExceptionMacro("OpenJPHImageIO only supports 8 and 16 bit images.");
+  }
+
+  OpenJPH::FrameInfo frameInfo{
+    .width = static_cast<uint16_t>(this->GetDimensions(0)),
+    .height = static_cast<uint16_t>(this->GetDimensions(1)),
+    .bitsPerSample = bitsPerSample,
+    .componentCount = static_cast<uint8_t>(this->GetNumberOfComponents()),
+    .isSigned = isSigned,
+  };
+  return this->m_Encoder->getDecodedBytes(frameInfo);
+}
+
 
 
 void
 OpenJPHImageIO::Write(const void * buffer)
 {
   this->WriteImageInformation();
+  std::vector<uint8_t> & decodedBytes = this->GetDecodedBytes();
+  decodedBytes.resize(this->GetImageSizeInBytes());
 
-  // std::ofstream outFile;
-  // this->OpenFileForWriting(outFile, m_FileName, false);
-  // outFile.seekp(this->m_HeaderSize, std::ios::beg);
+  std::memcpy(decodedBytes.data(), buffer, decodedBytes.size());
 
-  // const auto numberOfBytes = static_cast<SizeValueType>(this->GetImageSizeInBytes());
-  // const auto numberOfComponents = static_cast<SizeValueType>(this->GetImageSizeInComponents());
+  this->m_Encoder->encode();
 
-  // if (this->GetComponentType() != IOComponentEnum::SHORT)
-  // {
-  //   itkExceptionMacro("OpenJPHImageIO only supports writing short files.");
-  // }
-
-  // if (ByteSwapper<short>::SystemIsBigEndian())
-  // {
-  //   char * tempmemory = new char[numberOfBytes];
-  //   memcpy(tempmemory, buffer, numberOfBytes);
-  //   {
-  //     ByteSwapper<short>::SwapRangeFromSystemToBigEndian(reinterpret_cast<short *>(tempmemory), numberOfComponents);
-  //   }
-
-  //   // Write the actual pixel data
-  //   outFile.write(static_cast<const char *>(tempmemory), numberOfBytes);
-  //   delete[] tempmemory;
-  // }
-  // else
-  // {
-  //   outFile.write(static_cast<const char *>(buffer), numberOfBytes);
-  // }
-
-  // outFile.close();
+  this->WriteFile(this->m_FileName, decodedBytes);
 }
 
 std::string

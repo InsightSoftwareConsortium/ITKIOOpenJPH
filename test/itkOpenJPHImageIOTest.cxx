@@ -47,18 +47,24 @@ testPixelType(const std::string & inputJ2CFileName, const std::string & outputFi
 
   ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(image, outputFileName));
 
-  // using WriterType = itk::ImageFileWriter<ImageType>;
-  // WriterType::Pointer writer = WriterType::New();
-  // if (argc > 3) // Explicitly use jphIO
-  // {
-  //   ITK_TEST_EXPECT_TRUE(jphIO->CanWriteFile(outputFileName.c_str()));
+  typename ImageType::Pointer writtenImage;
+  ITK_TRY_EXPECT_NO_EXCEPTION(writtenImage = itk::ReadImage<ImageType>(outputFileName));
 
-  //   ITK_TEST_EXPECT_TRUE(!jphIO->CanWriteFile((outputFileName + ".exe").c_str()));
-  //   writer->SetImageIO(jphIO);
-  // }
-  // writer->SetInput(image);
-  // writer->SetFileName(outputFileName);
-  // ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+  // Read the file explicitly requesting OpenJPHIO
+  typename itk::OpenJPHImageIO::Pointer jphIO = itk::OpenJPHImageIO::New();
+  ITK_TEST_EXPECT_TRUE(jphIO->CanWriteFile(outputJ2CFileName.c_str()));
+
+
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  typename WriterType::Pointer writer = WriterType::New();
+  ITK_TEST_EXPECT_TRUE(!jphIO->CanWriteFile((outputJ2CFileName + ".exe").c_str()));
+  writer->SetImageIO(jphIO);
+  writer->SetInput(writtenImage);
+  writer->SetFileName(outputJ2CFileName);
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+  typename ImageType::Pointer writtenImageBack;
+  ITK_TRY_EXPECT_NO_EXCEPTION(writtenImageBack = itk::ReadImage<ImageType>(outputJ2CFileName));
 
   std::cout << "Test finished" << std::endl;
   return EXIT_SUCCESS;
