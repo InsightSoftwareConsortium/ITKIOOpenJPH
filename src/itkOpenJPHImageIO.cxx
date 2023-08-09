@@ -285,11 +285,11 @@ OpenJPHImageIO::GetDecodedBytes()
   const auto height = static_cast<uint16_t>(this->GetDimensions(1));
   const auto numberOfComponents = static_cast<uint8_t>(this->GetNumberOfComponents());
   OpenJPH::FrameInfo frameInfo{
-    .width = width,
-    .height = height,
-    .bitsPerSample = bitsPerSample,
-    .componentCount = numberOfComponents,
-    .isSigned = isSigned,
+    width,
+    height,
+    bitsPerSample,
+    numberOfComponents,
+    isSigned,
   };
   return this->m_Encoder->getDecodedBytes(frameInfo);
 }
