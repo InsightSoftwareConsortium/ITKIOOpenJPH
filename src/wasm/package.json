@@ -9,14 +9,14 @@
     "build:emscripten:debug": "itk-wasm -i itkwasm/emscripten:20230809-f5d68877-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
     "build:wasi": "itk-wasm -i itkwasm/wasi:20230809-f5d68877 build",
     "build:wasi:debug": "itk-wasm -i itkwasm/wasi:20230809-f5d68877-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
-    "bindgen:typescript": "itk-wasm -b emscripten-build bindgen --output-dir wasm/typescript --package-version 0.1.0 --package-name @itk-wasm/htj2k --package-description \"Read and write High-throughput JPEG2000 (HTJ2K) images.\" --repository 'https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH'",
-    "bindgen:python": "itk-wasm -b wasi-build bindgen --package-version 0.1.0 --language python --output-dir wasm/python --package-name itkwasm-htj2k --package-description \"Read and write High-throughput JPEG2000 (HTJ2K) images.\" --repository \"https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH\"",
+    "bindgen:typescript": "itk-wasm -b emscripten-build bindgen --package-version 0.1.0 --package-name @itk-wasm/htj2k --package-description \"Read and write High-throughput JPEG2000 (HTJ2K) images.\" --repository 'https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH'",
+    "bindgen:python": "itk-wasm -b wasi-build bindgen --package-version 0.1.0 --interface python --package-name itkwasm-htj2k --package-description \"Read and write High-throughput JPEG2000 (HTJ2K) images.\" --repository \"https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH\"",
     "test": "npm run test:wasi",
     "test:wasi": "itk-wasm test",
     "clean": "git clean -fdx -e node_modules"
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "itk-wasm": "^1.0.0-b.122"
+    "itk-wasm": "^1.0.0-b.125"
   }
 }
