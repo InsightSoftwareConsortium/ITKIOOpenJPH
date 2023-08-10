@@ -19,6 +19,7 @@
 #include "itkInputBinaryStream.h"
 #include "itkOutputImage.h"
 #include "itkImage.h"
+#include "itkVector.h"
 #include "itkVectorImage.h"
 
 #include "ojphInformation.h"
@@ -161,6 +162,12 @@ int main( int argc, char * argv[] )
       if (frameInfo.componentCount == 1)
       {
         using ImageType = itk::Image<uint8_t, Dimension>;
+        using PipelineType = PipelineFunctor<ImageType>;
+        return PipelineType()(pipeline);
+      }
+      else if(frameInfo.componentCount == 4)
+      {
+        using ImageType = itk::Image<itk::Vector<uint8_t, 4>, Dimension>;
         using PipelineType = PipelineFunctor<ImageType>;
         return PipelineType()(pipeline);
       }

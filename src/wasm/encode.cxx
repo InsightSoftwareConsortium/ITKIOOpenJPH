@@ -19,6 +19,7 @@
 #include "itkInputImage.h"
 #include "itkOutputBinaryStream.h"
 #include "itkImage.h"
+#include "itkVector.h"
 #include "itkVectorImage.h"
 #include "itkSupportInputImageTypes.h"
 #include "itkDefaultConvertPixelTraits.h"
@@ -148,6 +149,7 @@ int main( int argc, char * argv[] )
 
   return itk::wasm::SupportInputImageTypes<PipelineFunctor,
     uint8_t,
+    itk::Vector<uint8_t, 4>,
     int8_t,
     uint16_t,
     int16_t>::Dimensions<2U>("image", pipeline);

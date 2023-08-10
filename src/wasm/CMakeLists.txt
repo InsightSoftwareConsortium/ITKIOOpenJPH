@@ -45,6 +45,12 @@ add_test(NAME decode-test
     ${CMAKE_CURRENT_BINARY_DIR}/CT1.mha
   )
 
+add_test(NAME decode-multicomponent-test
+  COMMAND decode
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/data/input/itk_logo.j2c
+    ${CMAKE_CURRENT_BINARY_DIR}/itk_logo.mha
+  )
+
 add_test(NAME decode-decomposition-level-test
   COMMAND decode
     ${CMAKE_CURRENT_SOURCE_DIR}/test/data/input/CT1.j2c
@@ -63,4 +69,10 @@ add_test(NAME encode-test
   COMMAND encode
     ${CMAKE_CURRENT_SOURCE_DIR}/test/data/input/CT1.mha
     ${CMAKE_CURRENT_BINARY_DIR}/CT1.j2c
+  )
+
+add_test(NAME encode-multicomponent-test
+  COMMAND encode
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/data/input/itk_logo.mha
+    ${CMAKE_CURRENT_BINARY_DIR}/itk_logo.j2c
   )
