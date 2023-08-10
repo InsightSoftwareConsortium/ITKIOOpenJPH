@@ -22,18 +22,18 @@ find_package(ITK REQUIRED
   )
 include(${ITK_USE_FILE})
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../src/FetchOpenJPH.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/FetchOpenJPH.cmake)
 
 add_executable(decode decode.cxx)
 target_link_libraries(decode PUBLIC ${ITK_LIBRARIES} openjph)
-target_include_directories(decode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../src/OpenJPHCxx)
+target_include_directories(decode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/OpenJPHCxx)
 if(WASI OR EMSCRIPTEN)
   target_compile_definitions(decode PUBLIC -DOJPH_ENABLE_WASM_SIMD)
 endif()
 
 add_executable(encode encode.cxx)
 target_link_libraries(encode PUBLIC ${ITK_LIBRARIES} openjph)
-target_include_directories(encode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../src/OpenJPHCxx)
+target_include_directories(encode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/OpenJPHCxx)
 if(WASI OR EMSCRIPTEN)
   target_compile_definitions(encode PUBLIC -DOJPH_ENABLE_WASM_SIMD)
 endif()

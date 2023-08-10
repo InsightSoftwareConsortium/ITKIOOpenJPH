@@ -1,2 +1,2 @@
-wasm/node_modules
-wasm/pnpm-lock.yaml
+node_modules
+pnpm-lock.yaml
