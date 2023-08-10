@@ -10,9 +10,10 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries?" FORCE)
 include(FetchContent)
 FetchContent_Declare(
   OpenJPH
-  GIT_REPOSITORY https://github.com/aous72/OpenJPH.git
-  # master 2023-08-07
-  GIT_TAG        02c1b163b483a28f3e192ef935d258b0cbe8c751
+  # GIT_REPOSITORY https://github.com/aous72/OpenJPH.git
+  GIT_REPOSITORY https://github.com/thewtex/OpenJPH.git
+  # upstream master 2023-08-07, cmake-tweaks branch
+  GIT_TAG        81fb9655fdec0efdaa3eac7c0838435c97d6bd25
 )
 FetchContent_MakeAvailable(OpenJPH)
 set(BUILD_SHARED_LIBS ${_itk_build_shared} CACHE BOOL "Build shared libraries?" FORCE) # restore original flag
