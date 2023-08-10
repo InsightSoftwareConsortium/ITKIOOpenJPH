@@ -22,7 +22,6 @@
 #include "itkVectorImage.h"
 
 #include "ojphInformation.h"
-#include "ojphHTJ2KEncoder.h"
 #include "ojphHTJ2KDecoder.h"
 
 static auto openjphDecoder = std::make_unique<OpenJPH::HTJ2KDecoder>();

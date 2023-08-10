@@ -31,6 +31,13 @@ if(WASI OR EMSCRIPTEN)
   target_compile_definitions(decode PUBLIC -DOJPH_ENABLE_WASM_SIMD)
 endif()
 
+add_executable(encode encode.cxx)
+target_link_libraries(encode PUBLIC ${ITK_LIBRARIES} openjph)
+target_include_directories(encode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../src/OpenJPHCxx)
+if(WASI OR EMSCRIPTEN)
+  target_compile_definitions(encode PUBLIC -DOJPH_ENABLE_WASM_SIMD)
+endif()
+
 enable_testing()
 add_test(NAME decode-test
   COMMAND decode
