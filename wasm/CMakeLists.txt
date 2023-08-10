@@ -58,3 +58,9 @@ add_test(NAME decode-information-only-test
     ${CMAKE_CURRENT_BINARY_DIR}/CT1-information-only.mha
     --information-only
   )
+
+add_test(NAME encode-test
+  COMMAND encode
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/data/input/CT1.mha
+    ${CMAKE_CURRENT_BINARY_DIR}/CT1.j2c
+  )

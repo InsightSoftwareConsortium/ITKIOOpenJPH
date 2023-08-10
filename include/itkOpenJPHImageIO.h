@@ -155,9 +155,9 @@ public:
   itkSetMacro(Decompositions, size_t);
 
   /** Set/Get whether encoding is reversible, i.e. lossless */
-  itkGetConstMacro(IsReversible, bool);
-  itkSetMacro(IsReversible, bool);
-  itkBooleanMacro(IsReversible);
+  itkGetConstMacro(NotReversible, bool);
+  itkSetMacro(NotReversible, bool);
+  itkBooleanMacro(NotReversible);
 
   /** Set/Get the lossy quantization. Ignore if IsReversible is true. */
   itkGetConstMacro(QuantizationStep, float);
@@ -216,10 +216,12 @@ private:
   std::vector<uint8_t> &
   GetDecodedBytes();
 
+  // Decoding parameters.
   int m_DecompositionLevel{0};
 
+  // Encoding parameters.
   size_t m_Decompositions{5};
-  bool m_IsReversible{true};
+  bool m_NotReversible{false};
   float m_QuantizationStep{-1.0};
   int m_ProgressionOrder{2}; // RPCL
   JPHSizeType m_TileSize;

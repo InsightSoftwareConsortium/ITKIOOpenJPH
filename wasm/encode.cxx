@@ -21,6 +21,8 @@
 #include "itkImage.h"
 #include "itkVectorImage.h"
 #include "itkSupportInputImageTypes.h"
+#include "itkDefaultConvertPixelTraits.h"
+#include "itkWasmMapComponentType.h"
 
 #include "ojphHTJ2KEncoder.h"
 
@@ -43,11 +45,11 @@ public:
     int decompositions = 5;
     pipeline.add_option("-d,--decompositions", decompositions, "Number of wavelet decompositions");
 
-    bool isReversible = false;
-    pipeline.add_flag("-r,--reversible", isReversible, "Use reversible, i.e. lossless, encoding");
+    bool notReversible = false;
+    pipeline.add_flag("-r,--not-reversible", notReversible, "Lossy and not reversible, i.e. not lossless, encoding");
 
     float quantizationStep = 1.0f;
-    pipeline.add_option("-q,--quantization-step", quantizationStep, "Quantization step size for lossy compression. Ignored if isReversible is true.")->check(CLI::Range(0.0f, 1.0f));
+    pipeline.add_option("-q,--quantization-step", quantizationStep, "Quantization step size for lossy compression. Ignored unless not reversible is enabled.")->check(CLI::Range(0.0f, 1.0f));
 
     int progressionOrder = 2;
     pipeline.add_option("-p,--progression-order", progressionOrder, "Progression order. 0 = LRCP, 1 = RLCP, 2 = RPCL, 3 = PCRL, 4 = CPRL");
@@ -64,68 +66,77 @@ public:
     using OutputBinaryStreamType = itk::wasm::OutputBinaryStream;
     OutputBinaryStreamType outputBinaryStream;
     pipeline.add_option("output", outputBinaryStream, "Output binary HTJ2K codestream")->type_name("OUTPUT_BINARY_STREAM")->required();
-    // int decompositionLevel = 0;
-    // pipeline.add_option("-d,--decomposition-level", decompositionLevel, "Decomposition level to decode. 0 is the highest resolution.");
-
-    // bool informationOnly = false;
-    // pipeline.add_flag("-i,--information-only", informationOnly, "Only read metadata for the image but do not decode the pixel data.");
-
-    // using OutputImageType = itk::wasm::OutputImage<ImageType>;
-    // OutputImageType outputImage;
-    // pipeline.add_option("image", outputImage, "Output image")->type_name("OUTPUT_IMAGE")->required();
 
     ITK_WASM_PARSE(pipeline);
 
-    // typename ImageType::Pointer image = ImageType::New();
+    typename ImageType::ConstPointer image = inputImage.Get();
 
-    // const auto size = openjphDecoder->calculateSizeAtDecompositionLevel(decompositionLevel);
+    OpenJPH::FrameInfo frameInfo;
 
-    // image->SetRegions({size.width, size.height});
-    // image->Allocate();
+    const auto size = image->GetLargestPossibleRegion().GetSize();
+    frameInfo.width = size[0];
+    frameInfo.height = size[1];
 
-    // const auto imageOffset = openjphDecoder->getImageOffset();
-    // typename ImageType::PointType origin;
-    // origin[0] = static_cast<double>( imageOffset.x );
-    // origin[1] = static_cast<double>( imageOffset.y );
-    // image->SetOrigin(origin);
+    frameInfo.componentCount = image->GetNumberOfComponentsPerPixel();
 
-    // itk::MetaDataDictionary & thisDic = image->GetMetaDataDictionary();
-    // // Number of wavelet decompositions
-    // itk::EncapsulateMetaData<int>(thisDic, "NumberOfDecompositions", openjphDecoder->getNumDecompositions());
-    // itk::EncapsulateMetaData<bool>(thisDic, "IsReversible", openjphDecoder->getIsReversible());
-    // itk::EncapsulateMetaData<int>(thisDic, "ProgressionOrder", openjphDecoder->getProgressionOrder());
+    using PixelType = typename ImageType::IOPixelType;
+    using ConvertPixelTraits = itk::DefaultConvertPixelTraits<PixelType>;
+    using ComponentType = typename ConvertPixelTraits::ComponentType;
+    const auto componentType = itk::wasm::MapComponentType<ComponentType>::ComponentString;
 
-    // std::vector<double> tileSize(2);
-    // tileSize[0] = openjphDecoder->getTileSize().width;
-    // tileSize[1] = openjphDecoder->getTileSize().height;
-    // itk::EncapsulateMetaData<decltype(tileSize)>(thisDic, "TileSize" , tileSize);
+    if (componentType == "uint8")
+      {
+      frameInfo.bitsPerSample = 8;
+      frameInfo.isSigned = false;
+      }
+    else if (componentType == "int8")
+      {
+      frameInfo.bitsPerSample = 8;
+      frameInfo.isSigned = true;
+      }
+    else if (componentType == "uint16")
+      {
+      frameInfo.bitsPerSample = 16;
+      frameInfo.isSigned = false;
+      }
+    else if (componentType == "int16")
+      {
+      frameInfo.bitsPerSample = 16;
+      frameInfo.isSigned = true;
+      }
 
-    // std::vector<double> tileOffset(2);
-    // tileOffset[0] = openjphDecoder->getTileOffset().x;
-    // tileOffset[1] = openjphDecoder->getTileOffset().y;
-    // itk::EncapsulateMetaData<decltype(tileOffset)>(thisDic, "TileOffset" , tileOffset);
+    std::vector<uint8_t> & decodedBytes = openjphEncoder->getDecodedBytes(frameInfo);
+    decodedBytes.resize(frameInfo.width * frameInfo.height * frameInfo.componentCount * frameInfo.bitsPerSample / 8);
+    std::memcpy(decodedBytes.data(), image->GetBufferPointer(), decodedBytes.size());
 
-    // std::vector<double> blockDimensions(2);
-    // blockDimensions[0] = openjphDecoder->getBlockDimensions().width;
-    // blockDimensions[1] = openjphDecoder->getBlockDimensions().height;
-    // itk::EncapsulateMetaData<decltype(blockDimensions)>(thisDic, "BlockDimensions" , blockDimensions);
+    openjphEncoder->setDecompositions(decompositions);
+    openjphEncoder->setQuality(!notReversible, quantizationStep);
+    openjphEncoder->setProgressionOrder(progressionOrder);
+    OpenJPH::Point offset;
+    const auto origin = image->GetOrigin();
+    offset.x = origin[0];
+    offset.y = origin[1];
+    openjphEncoder->setImageOffset(offset);
+    OpenJPH::Size ojphTileSize;
+    ojphTileSize.width = tileSize[0];
+    ojphTileSize.height = tileSize[1];
+    openjphEncoder->setTileSize(ojphTileSize);
+    OpenJPH::Point ojphTileOffset;
+    ojphTileOffset.x = tileOffset[0];
+    ojphTileOffset.y = tileOffset[1];
+    openjphEncoder->setTileOffset(ojphTileOffset);
+    OpenJPH::Size ojphBlockDimensions;
+    ojphBlockDimensions.width = blockDimensions[0];
+    ojphBlockDimensions.height = blockDimensions[1];
+    openjphEncoder->setBlockDimensions(ojphBlockDimensions);
+    // Todo, expose these options
+    openjphEncoder->setIsUsingColorTransform(false);
 
-    // const int numberOfLayers = openjphDecoder->getNumLayers();
-    // itk::EncapsulateMetaData<decltype(numberOfLayers)>(thisDic, "NumberOfLayers" , numberOfLayers);
+    ITK_WASM_CATCH_EXCEPTION(pipeline, openjphEncoder->encode());
 
-    // const bool isUsingColorTransform = openjphDecoder->getIsUsingColorTransform();
-    // itk::EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "UseColorTransform" , isUsingColorTransform);
-
-    // if (!informationOnly)
-    // {
-    //   ITK_WASM_CATCH_EXCEPTION(pipeline, openjphDecoder->decodeSubResolution(decompositionLevel));
-
-    //   const std::vector<uint8_t> & decodedBytes = openjphDecoder->getDecodedBytes();
-    //   auto buffer = image->GetBufferPointer();
-    //   std::memcpy(buffer, decodedBytes.data(), decodedBytes.size());
-    // }
-
-    // outputImage.Set(image);
+    const std::vector<uint8_t> & encodedBytes = openjphEncoder->getEncodedBytes();
+    std::ostream_iterator<char> oIt(outputBinaryStream.Get());
+    std::copy(encodedBytes.begin(), encodedBytes.end(), oIt);
 
     return EXIT_SUCCESS;
   }
@@ -140,107 +151,4 @@ int main( int argc, char * argv[] )
     int8_t,
     uint16_t,
     int16_t>::Dimensions<2U>("image", pipeline);
-
-  // itk::wasm::InputBinaryStream inputCodestream;
-  // auto codestreamOption = pipeline.add_option("codestream", inputCodestream, "Input HTJ2K codestream")->type_name("INPUT_BINARY_STREAM");
-
-  // ITK_WASM_PRE_PARSE(pipeline);
-
-  // codestreamOption->required();
-
-  // constexpr unsigned int Dimension = 2;
-  // OpenJPH::FrameInfo frameInfo{ 256, 256, 8, 1, false };
-
-  // // not -h, --help
-  // if (pipeline.get_argc() > 2)
-  // {
-  //   inputCodestream.Get().seekg(0, std::ios::end);
-  //   const std::streampos streamSize = inputCodestream.Get().tellg();
-  //   inputCodestream.Get().seekg(0, std::ios::beg);
-
-  //   inputCodestream.Get().unsetf(std::ios::skipws);
-  //   std::vector<uint8_t> & encodedBytes = openjphDecoder->getEncodedBytes();
-  //   encodedBytes.reserve(streamSize);
-  //   encodedBytes.insert(encodedBytes.begin(),
-  //                       std::istream_iterator<uint8_t>(inputCodestream.Get()),
-  //                       std::istream_iterator<uint8_t>());
-
-  //   ITK_WASM_CATCH_EXCEPTION(pipeline, openjphDecoder->readHeader());
-
-  //   const auto readFrameInfo = openjphDecoder->getFrameInfo();
-  //   frameInfo.width = readFrameInfo.width;
-  //   frameInfo.height = readFrameInfo.height;
-  //   frameInfo.bitsPerSample = readFrameInfo.bitsPerSample;
-  //   frameInfo.componentCount = readFrameInfo.componentCount;
-  //   frameInfo.isSigned = readFrameInfo.isSigned;
-  // }
-
-  // if (frameInfo.bitsPerSample <= 8)
-  // {
-  //   if (frameInfo.isSigned)
-  //   {
-  //     if (frameInfo.componentCount == 1)
-  //     {
-  //       using ImageType = itk::Image<int8_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //     else
-  //     {
-  //       using ImageType = itk::VectorImage<int8_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //   }
-  //   else
-  //   {
-  //     if (frameInfo.componentCount == 1)
-  //     {
-  //       using ImageType = itk::Image<uint8_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //     else
-  //     {
-  //       using ImageType = itk::VectorImage<uint8_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //   }
-  // }
-  // else if (frameInfo.bitsPerSample <= 16)
-  // {
-  //   if (frameInfo.isSigned)
-  //   {
-  //     if (frameInfo.componentCount == 1)
-  //     {
-  //       using ImageType = itk::Image<int16_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //     else
-  //     {
-  //       using ImageType = itk::VectorImage<int16_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //   }
-  //   else
-  //   {
-  //     if (frameInfo.componentCount == 1)
-  //     {
-  //       using ImageType = itk::Image<uint16_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //     else
-  //     {
-  //       using ImageType = itk::VectorImage<uint16_t, Dimension>;
-  //       using PipelineType = PipelineFunctor<ImageType>;
-  //       return PipelineType()(pipeline);
-  //     }
-  //   }
-  // }
-
-  // return EXIT_SUCCESS;
 }

@@ -160,7 +160,7 @@ OpenJPHImageIO::ReadHeader()
   MetaDataDictionary & thisDic = this->GetMetaDataDictionary();
   // Number of wavelet decompositions
   EncapsulateMetaData<int>(thisDic, "NumberOfDecompositions", this->m_Decoder->getNumDecompositions());
-  EncapsulateMetaData<bool>(thisDic, "IsReversible", this->m_Decoder->getIsReversible());
+  EncapsulateMetaData<bool>(thisDic, "NotReversible", !this->m_Decoder->getIsReversible());
   EncapsulateMetaData<int>(thisDic, "ProgressionOrder", this->m_Decoder->getProgressionOrder());
 
   std::vector<double> tileSize(2);
@@ -192,7 +192,7 @@ OpenJPHImageIO::Read(void * buffer)
   std::vector<uint8_t> & encodedBytes = this->m_Decoder->getEncodedBytes();
   this->ReadFile(this->m_FileName, encodedBytes);
 
-  this->m_Decoder->decodeSubResoultion(this->m_DecompositionLevel);
+  this->m_Decoder->decodeSubResolution(this->m_DecompositionLevel);
 
   this->ReadHeader();
 
@@ -227,7 +227,7 @@ OpenJPHImageIO::WriteImageInformation()
   this->GetDecodedBytes();
 
   this->m_Encoder->setDecompositions(this->GetDecompositions());
-  this->m_Encoder->setQuality(this->GetIsReversible(), this->GetQuantizationStep());
+  this->m_Encoder->setQuality(!this->GetNotReversible(), this->GetQuantizationStep());
   this->m_Encoder->setProgressionOrder(this->GetProgressionOrder());
 
   OpenJPH::Point offset;

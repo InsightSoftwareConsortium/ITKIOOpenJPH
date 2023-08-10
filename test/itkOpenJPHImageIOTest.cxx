@@ -49,9 +49,9 @@ testPixelType(const std::string & inputJ2CFileName, const std::string & outputFi
   itk::ExposeMetaData<int>(metaData, "NumberOfDecompositions", numberOfDecompositions);
   ITK_TEST_EXPECT_EQUAL(numberOfDecompositions, 5);
 
-  bool isReversible = false;
-  itk::ExposeMetaData<bool>(metaData, "IsReversible", isReversible);
-  ITK_TEST_EXPECT_EQUAL(isReversible, true);
+  bool notReversible = true;
+  itk::ExposeMetaData<bool>(metaData, "NotReversible", notReversible);
+  ITK_TEST_EXPECT_EQUAL(notReversible, false);
 
   ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(image, outputFileName, true));
 
