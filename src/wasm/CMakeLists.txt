@@ -23,6 +23,7 @@ find_package(ITK REQUIRED
 include(${ITK_USE_FILE})
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/FetchOpenJPH.cmake)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/OpenJPHCxx)
 
 add_executable(decode decode.cxx)
 target_link_libraries(decode PUBLIC ${ITK_LIBRARIES} openjph)
