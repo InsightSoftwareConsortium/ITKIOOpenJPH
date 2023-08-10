@@ -192,7 +192,7 @@ OpenJPHImageIO::Read(void * buffer)
   std::vector<uint8_t> & encodedBytes = this->m_Decoder->getEncodedBytes();
   this->ReadFile(this->m_FileName, encodedBytes);
 
-  this->m_Decoder->decode();
+  this->m_Decoder->decodeSubResoultion(this->m_DecompositionLevel);
 
   this->ReadHeader();
 
@@ -331,9 +331,8 @@ OpenJPHImageIO
   // Stop eating new lines in binary mode!
   istrm.unsetf(std::ios::skipws);
 
-  std::streampos fileSize;
   istrm.seekg(0, std::ios::end);
-  fileSize = istrm.tellg();
+  const std::streampos fileSize = istrm.tellg();
   istrm.seekg(0, std::ios::beg);
 
   // reserve capacity
