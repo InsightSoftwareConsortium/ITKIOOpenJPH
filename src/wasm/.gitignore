@@ -1,0 +1,4 @@
+bin/
+emscripten-build
+package-lock.json
+wasi-build
