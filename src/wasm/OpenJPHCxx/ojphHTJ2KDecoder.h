@@ -36,11 +36,25 @@ public:
   /// <summary>
   /// Returns the buffer to store the encoded bytes.  This method is not exported
   /// to JavaScript, it is intended to be called by C++ code
+  ///
+  /// Ignored if the encoded buffer is set via setEncodedBuffer().
   /// </summary>
   std::vector<uint8_t> &getEncodedBytes()
   {
     return encoded_;
   }
+
+
+  /// <summary>
+  /// Set the buffer to that stores the encoded bytes. This method is not exported
+  /// to JavaScript, it is intended to be called by C++ code
+  /// </summary>
+  void setEncodedBuffer(const uint8_t * data, size_t size)
+  {
+    mem_infile_data_ = data;
+    mem_infile_size_ = size;
+  }
+
 
   /// <summary>
   /// Returns the buffer to store the decoded bytes.  This method is not exported
@@ -60,7 +74,13 @@ public:
   {
     ojph::codestream codestream;
     ojph::mem_infile mem_file;
-    mem_file.open(encoded_.data(), encoded_.size());
+    if (mem_infile_data_ != nullptr)
+    {
+      mem_file.open(mem_infile_data_, mem_infile_size_);
+    } else
+    {
+      mem_file.open(encoded_.data(), encoded_.size());
+    }
     readHeader_(codestream, mem_file);
   }
 
@@ -90,7 +110,13 @@ public:
   {
     ojph::codestream codestream;
     ojph::mem_infile mem_file;
-    mem_file.open(encoded_.data(), encoded_.size());
+    if (mem_infile_data_ != nullptr)
+    {
+      mem_file.open(mem_infile_data_, mem_infile_size_);
+    } else
+    {
+      mem_file.open(encoded_.data(), encoded_.size());
+    }
     readHeader_(codestream, mem_file);
     decode_(codestream, frameInfo_, 0);
   }
@@ -105,7 +131,13 @@ public:
   {
     ojph::codestream codestream;
     ojph::mem_infile mem_file;
-    mem_file.open(encoded_.data(), encoded_.size());
+    if (mem_infile_data_ != nullptr)
+    {
+      mem_file.open(mem_infile_data_, mem_infile_size_);
+    } else
+    {
+      mem_file.open(encoded_.data(), encoded_.size());
+    }
     readHeader_(codestream, mem_file);
     decode_(codestream, frameInfo_, decompositionLevel);
   }
@@ -384,6 +416,8 @@ private:
   std::vector<Size> precincts_;
   int32_t numLayers_;
   bool isUsingColorTransform_;
+  const uint8_t * mem_infile_data_{nullptr};
+  size_t mem_infile_size_{0};
 };
 
 } // end namespace OpenJPH

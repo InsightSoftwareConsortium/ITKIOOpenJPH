@@ -40,10 +40,12 @@ public:
   }
 
   /// <summary>
-  /// Returns the buffer to store the decoded bytes.  This method is not
+  /// Set the frame information.  This method is not
   /// exported to JavaScript, it is intended to be called by C++ code
+  //
+  //  If setDecodedBytes is called, then the returned value is ignored.
   /// </summary>
-  std::vector<uint8_t> &getDecodedBytes(const FrameInfo &frameInfo)
+  void setFrameInfo(const FrameInfo & frameInfo)
   {
     frameInfo_ = frameInfo;
     downSamples_.resize(frameInfo_.componentCount);
@@ -52,7 +54,26 @@ public:
       downSamples_[c].x = 1;
       downSamples_[c].y = 1;
     }
+  }
+
+  /// <summary>
+  /// Returns the buffer to store the decoded bytes.  This method is not
+  /// exported to JavaScript, it is intended to be called by C++ code
+  //
+  //  If setDecodedBytes is called, then the returned value is ignored.
+  /// </summary>
+  std::vector<uint8_t> &getDecodedBytes()
+  {
     return decoded_;
+  }
+
+  /// <summary>
+  /// Set the buffer to store the decoded bytes.  This method is not
+  /// exported to JavaScript, it is intended to be called by C++ code
+  /// </summary>
+  void setDecodedBytes(const uint8_t * decodedBytes)
+  {
+    decodedBytes_ = decodedBytes;
   }
 
   /// <summary>
@@ -212,6 +233,7 @@ public:
     const size_t bytesPerPixel = frameInfo_.bitsPerSample / 8;
     ojph::ui32 next_comp;
     ojph::line_buf *cur_line = codestream.exchange(NULL, next_comp);
+    const uint8_t * decodedData = decodedBytes_ ? decodedBytes_ : decoded_.data();
     siz = codestream.access_siz();
     int height = siz.get_image_extent().y - siz.get_image_offset().y;
     for (size_t y = 0; y < height; y++)
@@ -221,7 +243,7 @@ public:
         int *dp = cur_line->i32;
         if (frameInfo_.bitsPerSample <= 8)
         {
-          uint8_t *pIn = (uint8_t *)(decoded_.data() + (y * frameInfo_.width * bytesPerPixel * siz.get_num_components()) + c);
+          uint8_t *pIn = (uint8_t *)(decodedData + (y * frameInfo_.width * bytesPerPixel * siz.get_num_components()) + c);
           for (size_t x = 0; x < frameInfo_.width; x++)
           {
             *dp++ = *pIn;
@@ -232,7 +254,7 @@ public:
         {
           if (frameInfo_.isSigned)
           {
-            int16_t *pIn = (int16_t *)(decoded_.data() + (y * frameInfo_.width * bytesPerPixel));
+            int16_t *pIn = (int16_t *)(decodedData + (y * frameInfo_.width * bytesPerPixel));
             for (size_t x = 0; x < frameInfo_.width; x++)
             {
               *dp++ = *pIn++;
@@ -240,7 +262,7 @@ public:
           }
           else
           {
-            uint16_t *pIn = (uint16_t *)(decoded_.data() + (y * frameInfo_.width * bytesPerPixel));
+            uint16_t *pIn = (uint16_t *)(decodedData + (y * frameInfo_.width * bytesPerPixel));
             for (size_t x = 0; x < frameInfo_.width; x++)
             {
               *dp++ = *pIn++;
@@ -258,6 +280,7 @@ public:
 
 private:
   std::vector<uint8_t> decoded_;
+  const uint8_t * decodedBytes_{ nullptr };
   EncodedBuffer encoded_;
   FrameInfo frameInfo_;
   size_t decompositions_;

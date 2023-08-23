@@ -224,7 +224,7 @@ OpenJPHImageIO::WriteImageInformation()
     itkExceptionMacro("FileName has not been set.");
   }
 
-  this->GetDecodedBytes();
+  this->SetFrameInfo();
 
   this->m_Encoder->setDecompositions(this->GetDecompositions());
   this->m_Encoder->setQuality(!this->GetNotReversible(), this->GetQuantizationStep());
@@ -253,8 +253,8 @@ OpenJPHImageIO::WriteImageInformation()
   this->m_Encoder->setIsUsingColorTransform(this->GetUseColorTransform());
 }
 
-std::vector<uint8_t> &
-OpenJPHImageIO::GetDecodedBytes()
+void
+OpenJPHImageIO::SetFrameInfo()
 {
   uint8_t bitsPerSample;
   bool isSigned;
@@ -291,7 +291,7 @@ OpenJPHImageIO::GetDecodedBytes()
     numberOfComponents,
     isSigned,
   };
-  return this->m_Encoder->getDecodedBytes(frameInfo);
+  this->m_Encoder->setFrameInfo(frameInfo);
 }
 
 
@@ -299,10 +299,9 @@ void
 OpenJPHImageIO::Write(const void * buffer)
 {
   this->WriteImageInformation();
-  std::vector<uint8_t> & decodedBytes = this->GetDecodedBytes();
+  this->SetFrameInfo();
 
-  decodedBytes.resize(this->GetImageSizeInBytes());
-  std::memcpy(decodedBytes.data(), buffer, decodedBytes.size());
+  this->m_Encoder->setDecodedBytes(reinterpret_cast<const uint8_t *>(buffer));
 
   this->m_Encoder->encode();
 

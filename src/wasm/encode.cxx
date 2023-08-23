@@ -106,9 +106,8 @@ public:
       frameInfo.isSigned = true;
       }
 
-    std::vector<uint8_t> & decodedBytes = openjphEncoder->getDecodedBytes(frameInfo);
-    decodedBytes.resize(frameInfo.width * frameInfo.height * frameInfo.componentCount * frameInfo.bitsPerSample / 8);
-    std::memcpy(decodedBytes.data(), image->GetBufferPointer(), decodedBytes.size());
+    openjphEncoder->setFrameInfo(frameInfo);
+    openjphEncoder->setDecodedBytes(reinterpret_cast<const uint8_t *>(image->GetBufferPointer()));
 
     openjphEncoder->setDecompositions(decompositions);
     openjphEncoder->setQuality(!notReversible, quantizationStep);

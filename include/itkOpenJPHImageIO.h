@@ -213,8 +213,8 @@ private:
   void
   ReadHeader();
 
-  std::vector<uint8_t> &
-  GetDecodedBytes();
+  void
+  SetFrameInfo();
 
   // Decoding parameters.
   int m_DecompositionLevel{0};
