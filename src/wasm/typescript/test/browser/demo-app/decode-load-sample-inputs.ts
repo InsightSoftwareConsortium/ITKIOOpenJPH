@@ -1,21 +1,14 @@
-// Generated file. To retain edits, remove this comment.
+export default async function decodeLoadSampleInputs (model) {
+  const codestreamButton = document.querySelector('#decodeInputs sl-button[name=codestream-file-button]')
+  codestreamButton.loading = true
+  const fileName = 'CT1.j2c'
+  const codestreamReponse = await fetch(`https://bafybeidgylhkxaiqdjd6tnlmayvzliqyxspymhjtvlooui37a6omsilwu4.ipfs.w3s.link/ipfs/bafybeidgylhkxaiqdjd6tnlmayvzliqyxspymhjtvlooui37a6omsilwu4/data/input/${fileName}`)
+  const codestreamData = new Uint8Array(await codestreamReponse.arrayBuffer())
+  model.inputs.set('codestream', codestreamData)
+  const codestreamElement = document.querySelector('#decode-codestream-details')
+  codestreamElement.innerHTML = `<pre>${globalThis.escapeHtml(codestreamData.subarray(0, 50).toString())}</pre>`
+  codestreamElement.disabled = false
+  codestreamButton.loading = false
 
-export default null
-// export default async function decodeLoadSampleInputs (model) {
-
-  // Load sample inputs for the decode function.
-  //
-  // This function should load sample inputs:
-  //
-  //  1) In the provided model map.
-  //  2) Into the corresponding HTML input elements.
-  //
-  // Example for an input named `exampleInput`:
-
-  // const exampleInput = 5
-  // model.inputs.set("exampleInput", exampleInput)
-  // const exampleElement = document.querySelector("#decodeInputs [name=example-input]")
-  // exampleElement.value = 5
-
-  // return model
-// }
+  return model
+}

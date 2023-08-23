@@ -9,3 +9,4 @@ const pipelineWorkerUrl: string | URL | null = new URL('/web-workers/pipeline.wo
 htj2k.setPipelineWorkerUrl(pipelineWorkerUrl)
 
 import './decode-controller.js'
+import './encode-controller.js'

@@ -59,7 +59,7 @@
 
   <sl-tab-group>
     <sl-tab slot="nav" panel="decode-panel">decode</sl-tab>
-    <sl-tab slot="nav" panel="encode-panel" disabled>encode</sl-tab>
+    <sl-tab slot="nav" panel="encode-panel">encode</sl-tab>
 
 
     <sl-tab-panel name="decode-panel">
@@ -107,6 +107,44 @@
         <sl-option value="vtk">vtk</sl-option>
       </sl-select>
       <sl-button variant="neutral" outline name="image-download" disabled>Download</sl-button>
+<br /><br />
+    </div>
+
+    </sl-tab-panel>
+
+
+    <sl-tab-panel name="encode-panel">
+
+    <small><i>Encode an ITK Image into a High Throughput JPEG2000 codestream</i></small><br /><br />
+
+    <div id="encodeInputs"><form action="">
+      <sl-tooltip content="Use the Upload button to provide the image"><sl-details id="encode-image-details" summary="image: Input image" disabled></sl-details></sl-tooltip>
+      <label for="image-file"><sl-button name="image-file-button" variant="primary" outline onclick="this.parentElement.nextElementSibling.click()">Upload</sp-button></label><input type="file" name="image-file" style="display: none"/>
+<br /><br />
+      <sl-input name="decompositions" type="number" value="5" step="1" label="decompositions" help-text="Number of wavelet decompositions"></sl-input>
+<br />
+      <sl-checkbox name="not-reversible">notReversible - <i>Lossy and not reversible, i.e. not lossless, encoding</i></sl-checkbox>
+<br /><br />
+      <sl-input name="quantization-step" type="number" value="1" step="any" label="quantizationStep" help-text="Quantization step size for lossy compression. Ignored unless not reversible is enabled."></sl-input>
+<br />
+      <sl-input name="progression-order" type="number" value="2" step="1" label="progressionOrder" help-text="Progression order. 0 = LRCP, 1 = RLCP, 2 = RPCL, 3 = PCRL, 4 = CPRL"></sl-input>
+<br />
+      <sl-input name="tile-size" type="text" value="[512,512]" label="tileSize" help-text="Tile size"></sl-input>
+<br />
+      <sl-input name="tile-offset" type="text" value="[0,0]" label="tileOffset" help-text="Tile offset"></sl-input>
+<br />
+      <sl-input name="block-dimensions" type="text" value="[64,64]" label="blockDimensions" help-text="Block dimensions"></sl-input>
+<br />
+    <sl-divider></sl-divider>
+      <br /><sl-button name="loadSampleInputs" variant="default" style="display: none;">Load sample inputs</sl-button>
+      <sl-button type="button" variant="success" name="run">Run</sl-button><br /><br />
+
+    </form></div>
+    <sl-divider></sl-divider>
+
+    <div id="encodeOutputs">
+      <sl-details disabled id="encode-output-details" summary="output: Output binary HTJ2K codestream"></sl-details>
+      <sl-button variant="neutral" outline name="output-download" disabled>Download</sl-button>
 <br /><br />
     </div>
 
