@@ -42,7 +42,8 @@ path = "itkwasm_htj2k_wasi/_version.py"
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
-  "itk-webassemblyinterface >= 1.0.b127"
+  "itk-webassemblyinterface >= 1.0.b127",
+  "itkwasm-compare-images",
 ]
 
 [project.urls]

@@ -16,7 +16,7 @@ pip install itkwasm-htj2k-wasi
 ## Development
 
 ```sh
-pip install pytest itk-webassemblyinterface>=1.0b127
+pip install pytest itk-webassemblyinterface>=1.0b127 itkwasm-compare-images
 pip install -e .
 pytest
 

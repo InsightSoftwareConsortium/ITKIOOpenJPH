@@ -3,7 +3,7 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "itkwasm-htj2k-emscripten"
+name = "itkwasm-htj2k"
 readme = "README.md"
 license = "Apache-2.0"
 dynamic = ["version", "description"]
@@ -27,21 +27,27 @@ classifiers = [
 keywords = [
   "itkwasm",
   "webassembly",
+  "wasi",
   "emscripten",
 ]
 
 requires-python = ">=3.7"
 dependencies = [
     "itkwasm >= 1.0.b131",
+    "itkwasm-htj2k-wasi; sys_platform != \"emscripten\"",
+    "itkwasm-htj2k-emscripten; sys_platform == \"emscripten\"",
+
 ]
 
 [tool.hatch.version]
-path = "itkwasm_htj2k_emscripten/_version.py"
+path = "itkwasm_htj2k/_version.py"
 
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
   "pytest-pyodide",
+  "itk-webassemblyinterface >= 1.0.b127",
+  "itkwasm-compare-images",
 ]
 
 [project.urls]
@@ -58,11 +64,6 @@ download-pyodide = [
   "tar xjf pyodide.tar.bz2",
   "rm -rf dist pyodide.tar.bz2",
   "mv pyodide dist",
-]
-serve = [
-  "hatch build -t wheel",
-  'echo "\nVisit http://localhost:8877/console.html\n"',
-  "python -m http.server --directory=./dist 8877",
 ]
 
 
