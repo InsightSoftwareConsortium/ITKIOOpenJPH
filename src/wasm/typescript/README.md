@@ -4,6 +4,10 @@
 
 > Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 (HTJ2K) images.
 
+[👨‍💻 **Live API Demo** ✨](https://itk-wasm-htj2k-app.on.fleek.co/ ':include :type=iframe width=100% height=800px')
+
+[🕮 **Documentation** 📚](https://itk-wasm-htj2k-docs.on.fleek.co/)
+
 ## Installation
 
 ```sh
