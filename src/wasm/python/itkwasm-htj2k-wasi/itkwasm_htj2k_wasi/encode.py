@@ -1,5 +1,3 @@
-# Generated file. Do not edit.
-
 from pathlib import Path, PurePosixPath
 import os
 from typing import Dict, Tuple, Optional, List
@@ -14,7 +12,6 @@ from itkwasm import (
     PipelineInput,
     Pipeline,
     Image,
-    BinaryStream,
 )
 
 def encode(
@@ -89,26 +86,23 @@ def encode(
         args.append('--progression-order')
         args.append(str(progression_order))
 
-    if len(tile_size) > 1:
-        if len(tile_size) < 2:
-            raise ValueError('"tile-size" option must have a length > 2')
-
+    if len(tile_size) < 2:
+       raise ValueError('"tile-size" kwarg must have a length == 2')
+    if len(tile_size) > 0:
         args.append('--tile-size')
         for value in tile_size:
             args.append(str(value))
 
-    if len(tile_offset) > 1:
-        if len(tile_offset) < 2:
-            raise ValueError('"tile-offset" option must have a length > 2')
-
+    if len(tile_offset) < 2:
+       raise ValueError('"tile-offset" kwarg must have a length == 2')
+    if len(tile_offset) > 0:
         args.append('--tile-offset')
         for value in tile_offset:
             args.append(str(value))
 
-    if len(block_dimensions) > 1:
-        if len(block_dimensions) < 2:
-            raise ValueError('"block-dimensions" option must have a length > 2')
-
+    if len(block_dimensions) < 2:
+       raise ValueError('"block-dimensions" kwarg must have a length == 2')
+    if len(block_dimensions) > 0:
         args.append('--block-dimensions')
         for value in block_dimensions:
             args.append(str(value))

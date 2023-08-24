@@ -1,5 +1,3 @@
-# Generated file. Do not edit.
-
 from pathlib import Path, PurePosixPath
 import os
 from typing import Dict, Tuple, Optional, List
@@ -66,4 +64,3 @@ def decode(
 
     result = outputs[0].data
     return result
-

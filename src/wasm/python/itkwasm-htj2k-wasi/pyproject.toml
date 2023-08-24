@@ -32,9 +32,8 @@ keywords = [
 
 requires-python = ">=3.7"
 dependencies = [
-    "itkwasm >= 1.0.b105",
+    "itkwasm >= 1.0.b131",
     "importlib_resources",
-
 ]
 
 [tool.hatch.version]
@@ -43,6 +42,7 @@ path = "itkwasm_htj2k_wasi/_version.py"
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
+  "itk-webassemblyinterface >= 1.0.b127"
 ]
 
 [project.urls]
