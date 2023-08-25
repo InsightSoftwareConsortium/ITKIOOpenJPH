@@ -7,6 +7,7 @@
   "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/src/index.d.ts",
       "browser": "./dist/bundles/htj2k.js",
       "node": "./dist/bundles/htj2k.node.js",
       "default": "./dist/bundles/htj2k.js"
