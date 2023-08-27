@@ -7,4 +7,4 @@ jobs:
     uses: InsightSoftwareConsortium/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-cxx.yml@edd0a4350396f533e9ec3755ed6c5af5ddfedb97
 
   python-build-workflow:
-    uses: thewtex/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-package-python.yml@dc0a1bbb125bd1a4484ee4e547392487364f45fb
+    uses: InsightSoftwareConsortium/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-package-python.yml@da6b8f355173b2b0c98b3ea5b872f48f54a4704e
