@@ -12,8 +12,8 @@ include(FetchContent)
 FetchContent_Declare(
   OpenJPH
   GIT_REPOSITORY https://github.com/aous72/OpenJPH.git
-  # upstream master 2023-08-15
-  GIT_TAG        e122c1e07c44c85ff7a780fc8f2bfaedf9e5964d
+  # upstream master 2023-09-20
+  GIT_TAG         5aab43f
 )
 FetchContent_MakeAvailable(OpenJPH)
 set(BUILD_SHARED_LIBS ${_itk_build_shared} CACHE BOOL "Build shared libraries?" FORCE) # restore original flag
