@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='itk-ioopenjph',
-    version='1.0.0',
+    version='1.1.0',
     author='Insight Software Consortium',
     author_email='itk+community@discourse.itk.org',
     packages=['itk'],

@@ -2,7 +2,7 @@
 
 import { writeImageArrayBuffer, copyImage } from 'itk-wasm'
 import * as htj2k from '../../../dist/bundles/htj2k.js'
-import decodeLoadSampleInputs from "./decode-load-sample-inputs.js"
+import decodeLoadSampleInputs, { usePreRun } from "./decode-load-sample-inputs.js"
 
 class DecodeModel {
 
@@ -81,6 +81,23 @@ class DecodeController  {
         }
     })
 
+    const tabGroup = document.querySelector('sl-tab-group')
+    tabGroup.addEventListener('sl-tab-show', async (event) => {
+      if (event.detail.name === 'decode-panel') {
+        const params = new URLSearchParams(window.location.search)
+        if (!params.has('functionName') || params.get('functionName') !== 'decode') {
+          params.set('functionName', 'decode')
+          const url = new URL(document.location)
+          url.search = params
+          window.history.replaceState({ functionName: 'decode' }, '', url)
+        }
+        if (!this.webWorker && loadSampleInputs && usePreRun) {
+          await loadSampleInputs(model, true)
+          await this.run()
+        }
+      }
+    })
+
     const runButton = document.querySelector('#decodeInputs sl-button[name="run"]')
     runButton.addEventListener('click', async (event) => {
       event.preventDefault()
@@ -93,16 +110,11 @@ class DecodeController  {
 
       try {
         runButton.loading = true
+
         const t0 = performance.now()
-
-        const { webWorker, image, } = await htj2k.decode(this.webWorker,
-          model.inputs.get('codestream').slice(),
-          Object.fromEntries(model.options.entries())
-        )
-
+        const { image, } = await this.run()
         const t1 = performance.now()
         globalThis.notify("decode successfully completed", `in ${t1 - t0} milliseconds.`, "success", "rocket-fill")
-        this.webWorker = webWorker
 
         model.outputs.set("image", image)
         imageOutputDownload.variant = "success"
@@ -118,6 +130,16 @@ class DecodeController  {
         runButton.loading = false
       }
     })
+  }
+
+  async run() {
+    const { webWorker, image, } = await htj2k.decode(this.webWorker,
+      this.model.inputs.get('codestream').slice(),
+      Object.fromEntries(this.model.options.entries())
+    )
+    this.webWorker = webWorker
+
+    return { image, }
   }
 }
 

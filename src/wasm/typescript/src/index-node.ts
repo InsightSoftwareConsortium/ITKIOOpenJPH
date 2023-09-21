@@ -20,3 +20,6 @@ export type { EncodeOptions }
 
 import encodeNode from './encode-node.js'
 export { encodeNode }
+
+export type { Image } from 'itk-wasm'
+export type { BinaryStream } from 'itk-wasm'

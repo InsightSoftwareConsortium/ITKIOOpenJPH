@@ -10,3 +10,12 @@ htj2k.setPipelineWorkerUrl(pipelineWorkerUrl)
 
 import './decode-controller.js'
 import './encode-controller.js'
+
+const tabGroup = document.querySelector('sl-tab-group')
+const params = new URLSearchParams(window.location.search)
+if (params.has('functionName')) {
+  const functionName = params.get('functionName')
+  tabGroup.show(functionName + '-panel')
+} else {
+  tabGroup.show('decode-panel')
+}
