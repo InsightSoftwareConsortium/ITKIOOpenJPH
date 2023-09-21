@@ -1,6 +1,6 @@
 {
   "name": "@itk-wasm/htj2k",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 (HTJ2K) images.",
   "type": "module",
   "module": "./dist/bundles/htj2k.js",
@@ -33,7 +33,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "itk-wasm": "^1.0.0-b.128"
+    "itk-wasm": "^1.0.0-b.140"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",

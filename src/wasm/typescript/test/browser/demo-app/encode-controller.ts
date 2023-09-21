@@ -2,7 +2,7 @@
 
 import { readImageFile, copyImage } from 'itk-wasm'
 import * as htj2k from '../../../dist/bundles/htj2k.js'
-import encodeLoadSampleInputs from "./encode-load-sample-inputs.js"
+import encodeLoadSampleInputs, { usePreRun } from "./encode-load-sample-inputs.js"
 
 class EncodeModel {
 
@@ -101,6 +101,23 @@ class EncodeController  {
         }
     })
 
+    const tabGroup = document.querySelector('sl-tab-group')
+    tabGroup.addEventListener('sl-tab-show', async (event) => {
+      if (event.detail.name === 'encode-panel') {
+        const params = new URLSearchParams(window.location.search)
+        if (!params.has('functionName') || params.get('functionName') !== 'encode') {
+          params.set('functionName', 'encode')
+          const url = new URL(document.location)
+          url.search = params
+          window.history.replaceState({ functionName: 'encode' }, '', url)
+        }
+        if (!this.webWorker && loadSampleInputs && usePreRun) {
+          await loadSampleInputs(model, true)
+          await this.run()
+        }
+      }
+    })
+
     const runButton = document.querySelector('#encodeInputs sl-button[name="run"]')
     runButton.addEventListener('click', async (event) => {
       event.preventDefault()
@@ -113,16 +130,11 @@ class EncodeController  {
 
       try {
         runButton.loading = true
+
         const t0 = performance.now()
-
-        const { webWorker, output, } = await htj2k.encode(this.webWorker,
-          copyImage(model.inputs.get('image')),
-          Object.fromEntries(model.options.entries())
-        )
-
+        const { output, } = await this.run()
         const t1 = performance.now()
         globalThis.notify("encode successfully completed", `in ${t1 - t0} milliseconds.`, "success", "rocket-fill")
-        this.webWorker = webWorker
 
         model.outputs.set("output", output)
         outputOutputDownload.variant = "success"
@@ -137,6 +149,16 @@ class EncodeController  {
         runButton.loading = false
       }
     })
+  }
+
+  async run() {
+    const { webWorker, output, } = await htj2k.encode(this.webWorker,
+      copyImage(this.model.inputs.get('image')),
+      Object.fromEntries(this.model.options.entries())
+    )
+    this.webWorker = webWorker
+
+    return { output, }
   }
 }
 

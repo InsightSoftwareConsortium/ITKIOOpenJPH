@@ -22,3 +22,6 @@ export type { EncodeOptions }
 
 import encode from './encode.js'
 export { encode }
+
+export type { Image } from 'itk-wasm'
+export type { BinaryStream } from 'itk-wasm'
