@@ -40,7 +40,7 @@ async function decode(
   const args = []
   // Inputs
   const codestreamName = '0'
-  args.push(codestreamName as string)
+  args.push(codestreamName)
 
   // Outputs
   const imageName = '0'
