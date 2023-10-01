@@ -1,6 +1,7 @@
 // Generated file. To retain edits, remove this comment.
 
-import { writeImageArrayBuffer, copyImage } from 'itk-wasm'
+import { writeImageArrayBuffer } from 'itk-wasm'
+import { copyImage } from 'itk-wasm'
 import * as htj2k from '../../../dist/bundles/htj2k.js'
 import decodeLoadSampleInputs, { usePreRun } from "./decode-load-sample-inputs.js"
 
@@ -96,19 +97,21 @@ class DecodeController  {
           const url = new URL(document.location)
           url.search = params
           window.history.replaceState({ functionName: 'decode' }, '', url)
+          await preRun()
         }
-        await preRun()
       }
     }
 
     const tabGroup = document.querySelector('sl-tab-group')
     tabGroup.addEventListener('sl-tab-show', onSelectTab)
-    document.addEventListener('DOMContentLoaded', () => {
+    function onInit() {
       const params = new URLSearchParams(window.location.search)
       if (params.has('functionName') && params.get('functionName') === 'decode') {
+        tabGroup.show('decode-panel')
         preRun()
       }
-    })
+    }
+    onInit()
 
     const runButton = document.querySelector('#decodeInputs sl-button[name="run"]')
     runButton.addEventListener('click', async (event) => {

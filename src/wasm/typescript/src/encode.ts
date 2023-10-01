@@ -41,7 +41,7 @@ async function encode(
   const args = []
   // Inputs
   const imageName = '0'
-  args.push(imageName as string)
+  args.push(imageName)
 
   // Outputs
   const outputName = '0'

@@ -8,8 +8,6 @@ htj2k.setPipelinesBaseUrl(pipelinesBaseUrl)
 const pipelineWorkerUrl: string | URL | null = new URL('/web-workers/pipeline.worker.js', document.location.origin).href
 htj2k.setPipelineWorkerUrl(pipelineWorkerUrl)
 
-import './decode-controller.js'
-import './encode-controller.js'
 
 const params = new URLSearchParams(window.location.search)
 if (!params.has('functionName')) {
@@ -18,3 +16,5 @@ if (!params.has('functionName')) {
   url.search = params
   window.history.replaceState({ functionName: 'decode' }, '', url)
 }
+import './decode-controller.js'
+import './encode-controller.js'
