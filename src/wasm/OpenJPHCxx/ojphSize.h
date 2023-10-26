@@ -46,9 +46,7 @@
 namespace OpenJPH {
 
 struct Size {
-    Size() : width(0), height(0) {}
-    Size(uint32_t width, uint32_t height) : width(width), height(height) {}
-
+    Size(uint32_t width = 0, uint32_t height = 0) : width(width), height(height) {}
     uint32_t width;
     uint32_t height;
 };

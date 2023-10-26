@@ -163,6 +163,9 @@ public:
   /// </summary>
   void setDownSample(size_t component, Point downSample)
   {
+    if(downSamples_.size() <= component) {
+      downSamples_.resize(component + 1);
+    }
     downSamples_[component] = downSample;
   }
 
@@ -216,11 +219,27 @@ public:
   }
 
   /// <summary>
-  /// Sets whether or not the color transform is used
+  /// Sets whether to add TLM at beginning of file
   /// </summary>
-  void setIsUsingColorTransform(bool isUsingColorTransform)
+  void setTLMMarker(bool set_tlm_marker)
   {
-    isUsingColorTransform_ = isUsingColorTransform;
+    request_tlm_marker_ = set_tlm_marker;
+  }
+
+  /// <summary>
+  /// Sets whether to add SOT markers at beginning of resolutions
+  /// </summary>
+  void setTilePartDivisionsAtResolutions(bool set_tilepart_divisions_at_resolutions)
+  {
+    set_tilepart_divisions_at_resolutions_ = set_tilepart_divisions_at_resolutions;
+  }
+
+  /// <summary>
+  /// Sets whether to add SOT markers at beginning of components
+  /// </summary>
+  void setTilePartDivisionsAtComponents(bool set_tilepart_divisions_at_components)
+  {
+    set_tilepart_divisions_at_components_ = set_tilepart_divisions_at_components;
   }
 
   /// <summary>
@@ -238,6 +257,7 @@ public:
     ojph::param_siz siz = codestream.access_siz();
     siz.set_image_extent(ojph::point(frameInfo_.width, frameInfo_.height));
     int num_comps = frameInfo_.componentCount;
+    downSamples_.resize(num_comps);
     siz.set_num_components(num_comps);
     for (int c = 0; c < num_comps; ++c)
       siz.set_component(c, ojph::point(downSamples_[c].x, downSamples_[c].y), frameInfo_.bitsPerSample, frameInfo_.isSigned);
@@ -260,13 +280,15 @@ public:
 
     const char *progOrders[] = {"LRCP", "RLCP", "RPCL", "PCRL", "CPRL"};
     cod.set_progression_order(progOrders[progressionOrder_]);
-    cod.set_color_transform(isUsingColorTransform_);
+    cod.set_color_transform(frameInfo_.isUsingColorTransform);
     cod.set_reversible(lossless_);
     if (!lossless_)
     {
       codestream.access_qcd().set_irrev_quant(quantizationStep_);
     }
-    codestream.set_planar(isUsingColorTransform_ == false);
+    codestream.set_tilepart_divisions(set_tilepart_divisions_at_resolutions_, set_tilepart_divisions_at_components_);
+    codestream.request_tlm_marker(request_tlm_marker_);
+    codestream.set_planar(frameInfo_.isUsingColorTransform == false);
     codestream.write_headers(&encoded_);
 
     // Encode the image
@@ -323,18 +345,20 @@ private:
   const uint8_t * decodedBytes_{ nullptr };
   EncodedBuffer encoded_;
   FrameInfo frameInfo_;
-  size_t decompositions_;
-  bool lossless_;
-  float quantizationStep_;
-  size_t progressionOrder_;
+  size_t decompositions_ = 5;
+  bool lossless_ = true;
+  bool request_tlm_marker_ = false;
+  bool set_tilepart_divisions_at_components_ = false;
+  bool set_tilepart_divisions_at_resolutions_ = false;
+  float quantizationStep_ = -1.0f;
+  size_t progressionOrder_ = 2; // RPCL
 
   std::vector<Point> downSamples_;
   Point imageOffset_;
   Size tileSize_;
   Point tileOffset_;
-  Size blockDimensions_;
+  Size blockDimensions_ = Size(64,64);
   std::vector<Size> precincts_;
-  bool isUsingColorTransform_{false};
 };
 
 } // end namespace OpenJPH

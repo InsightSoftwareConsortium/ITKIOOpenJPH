@@ -84,7 +84,7 @@ public:
     const int numberOfLayers = openjphDecoder->getNumLayers();
     itk::EncapsulateMetaData<decltype(numberOfLayers)>(thisDic, "NumberOfLayers" , numberOfLayers);
 
-    const bool isUsingColorTransform = openjphDecoder->getIsUsingColorTransform();
+    const bool isUsingColorTransform = openjphDecoder->getFrameInfo().isUsingColorTransform;
     itk::EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "UseColorTransform" , isUsingColorTransform);
 
     if (!informationOnly)
