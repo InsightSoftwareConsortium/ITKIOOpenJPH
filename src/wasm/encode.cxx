@@ -86,6 +86,9 @@ public:
     using ComponentType = typename ConvertPixelTraits::ComponentType;
     const auto componentType = itk::wasm::MapComponentType<ComponentType>::ComponentString;
 
+    // Todo, expose these options
+    frameInfo.isUsingColorTransform = false;
+
     if (componentType == "uint8")
       {
       frameInfo.bitsPerSample = 8;
@@ -130,8 +133,6 @@ public:
     ojphBlockDimensions.width = blockDimensions[0];
     ojphBlockDimensions.height = blockDimensions[1];
     openjphEncoder->setBlockDimensions(ojphBlockDimensions);
-    // Todo, expose these options
-    openjphEncoder->setIsUsingColorTransform(false);
 
     ITK_WASM_CATCH_EXCEPTION(pipeline, openjphEncoder->encode());
 

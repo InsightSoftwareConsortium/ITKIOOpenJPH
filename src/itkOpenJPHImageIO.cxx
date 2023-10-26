@@ -181,7 +181,7 @@ OpenJPHImageIO::ReadHeader()
   const int numberOfLayers = this->m_Decoder->getNumLayers();
   EncapsulateMetaData<decltype(numberOfLayers)>(thisDic, "NumberOfLayers" , numberOfLayers);
 
-  const bool isUsingColorTransform = this->m_Decoder->getIsUsingColorTransform();
+  const bool isUsingColorTransform = frameInfo.isUsingColorTransform;
   EncapsulateMetaData<decltype(isUsingColorTransform)>(thisDic, "UseColorTransform" , isUsingColorTransform);
 }
 
@@ -249,8 +249,6 @@ OpenJPHImageIO::WriteImageInformation()
   blockDimensions.width = this->GetBlockDimensions()[0];
   blockDimensions.height = this->GetBlockDimensions()[1];
   this->m_Encoder->setBlockDimensions(blockDimensions);
-
-  this->m_Encoder->setIsUsingColorTransform(this->GetUseColorTransform());
 }
 
 void
@@ -284,12 +282,15 @@ OpenJPHImageIO::SetFrameInfo()
   const auto width = static_cast<uint16_t>(this->GetDimensions(0));
   const auto height = static_cast<uint16_t>(this->GetDimensions(1));
   const auto numberOfComponents = static_cast<uint8_t>(this->GetNumberOfComponents());
+
+  const auto isUsingColorTransform = this->GetUseColorTransform();
   OpenJPH::FrameInfo frameInfo{
     width,
     height,
     bitsPerSample,
     numberOfComponents,
     isSigned,
+    isUsingColorTransform,
   };
   this->m_Encoder->setFrameInfo(frameInfo);
 }

@@ -46,9 +46,7 @@
 namespace OpenJPH {
 
 struct Point {
-    Point() : x(0), y(0) {}
-    Point(uint32_t x, uint32_t y) : x(x), y(y) {}
-
+    Point(uint32_t x = 0, uint32_t y = 0) : x(x), y(y) {}
     uint32_t x;
     uint32_t y;
 };
