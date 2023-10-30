@@ -11,7 +11,6 @@ import {
 import DecodeOptions from './decode-options.js'
 import DecodeNodeResult from './decode-node-result.js'
 
-
 import path from 'path'
 
 /**
@@ -54,19 +53,19 @@ async function decodeNode(
     options.informationOnly && args.push('--information-only')
   }
 
-  const pipelinePath = path.join(path.dirname(import.meta.url.substring(7)), '..', 'pipelines', 'decode')
+  const pipelinePath = path.join(path.dirname(import.meta.url.substring(7)), 'pipelines', 'decode')
 
   const {
     returnValue,
     stderr,
     outputs
   } = await runPipelineNode(pipelinePath, args, desiredOutputs, inputs)
-  if (returnValue !== 0) {
+  if (returnValue !== 0 && stderr !== "") {
     throw new Error(stderr)
   }
 
   const result = {
-    image: outputs[0].data as Image,
+    image: outputs[0]?.data as Image,
   }
   return result
 }

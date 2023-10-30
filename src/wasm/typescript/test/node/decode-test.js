@@ -11,7 +11,7 @@ function mkdirP(dir) {
 }
 
 
-import { encodeNode, decodeNode } from '../../dist/bundles/htj2k-node.js'
+import { encodeNode, decodeNode } from '../../dist/index-node.js'
 
 const testInputPath = path.resolve('..', 'test', 'data', 'input')
 const testOutputPath = path.resolve('..', 'test', 'output', 'typescript')

@@ -1,12 +1,11 @@
 // Generated file. To retain edits, remove this comment.
 
-import { readImageFile } from 'itk-wasm'
+import { readImage } from '@itk-wasm/image-io'
 import { copyImage } from 'itk-wasm'
-import * as htj2k from '../../../dist/bundles/htj2k.js'
+import * as htj2k from '../../../dist/index.js'
 import encodeLoadSampleInputs, { usePreRun } from "./encode-load-sample-inputs.js"
 
 class EncodeModel {
-
   inputs: Map<string, any>
   options: Map<string, any>
   outputs: Map<string, any>
@@ -16,10 +15,10 @@ class EncodeModel {
     this.options = new Map()
     this.outputs = new Map()
     }
-  }
+}
 
 
-class EncodeController  {
+class EncodeController {
 
   constructor(loadSampleInputs) {
     this.loadSampleInputs = loadSampleInputs
@@ -46,7 +45,7 @@ class EncodeController  {
         const dataTransfer = event.dataTransfer
         const files = event.target.files || dataTransfer.files
 
-        const { image, webWorker } = await readImageFile(null, files[0])
+        const { image, webWorker } = await readImage(null, files[0])
         webWorker.terminate()
         model.inputs.set("image", image)
         const details = document.getElementById("encode-image-details")

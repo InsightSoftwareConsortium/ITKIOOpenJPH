@@ -12,7 +12,6 @@ import {
 import EncodeOptions from './encode-options.js'
 import EncodeResult from './encode-result.js'
 
-
 import { getPipelinesBaseUrl } from './pipelines-base-url.js'
 import { getPipelineWorkerUrl } from './pipeline-worker-url.js'
 
@@ -25,7 +24,7 @@ import { getPipelineWorkerUrl } from './pipeline-worker-url.js'
  * @returns {Promise<EncodeResult>} - result object
  */
 async function encode(
-  webWorker: null | Worker,
+  webWorker: null | Worker | boolean,
   image: Image,
   options: EncodeOptions = {}
 ) : Promise<EncodeResult> {
@@ -106,13 +105,13 @@ async function encode(
     stderr,
     outputs
   } = await runPipeline(webWorker, pipelinePath, args, desiredOutputs, inputs, { pipelineBaseUrl: getPipelinesBaseUrl(), pipelineWorkerUrl: getPipelineWorkerUrl() })
-  if (returnValue !== 0) {
+  if (returnValue !== 0 && stderr !== "") {
     throw new Error(stderr)
   }
 
   const result = {
     webWorker: usedWebWorker as Worker,
-    output: (outputs[0].data as BinaryStream).data,
+    output: (outputs[0]?.data as BinaryStream).data,
   }
   return result
 }

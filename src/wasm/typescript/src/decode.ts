@@ -11,7 +11,6 @@ import {
 import DecodeOptions from './decode-options.js'
 import DecodeResult from './decode-result.js'
 
-
 import { getPipelinesBaseUrl } from './pipelines-base-url.js'
 import { getPipelineWorkerUrl } from './pipeline-worker-url.js'
 
@@ -24,7 +23,7 @@ import { getPipelineWorkerUrl } from './pipeline-worker-url.js'
  * @returns {Promise<DecodeResult>} - result object
  */
 async function decode(
-  webWorker: null | Worker,
+  webWorker: null | Worker | boolean,
   codestream: Uint8Array,
   options: DecodeOptions = {}
 ) : Promise<DecodeResult> {
@@ -64,13 +63,13 @@ async function decode(
     stderr,
     outputs
   } = await runPipeline(webWorker, pipelinePath, args, desiredOutputs, inputs, { pipelineBaseUrl: getPipelinesBaseUrl(), pipelineWorkerUrl: getPipelineWorkerUrl() })
-  if (returnValue !== 0) {
+  if (returnValue !== 0 && stderr !== "") {
     throw new Error(stderr)
   }
 
   const result = {
     webWorker: usedWebWorker as Worker,
-    image: outputs[0].data as Image,
+    image: outputs[0]?.data as Image,
   }
   return result
 }
