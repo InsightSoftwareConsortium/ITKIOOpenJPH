@@ -91,12 +91,12 @@ public:
   /// Sets a pointer to a vector containing the encoded bytes.  This can be used to avoid having to copy the encoded.  Set to 0
   /// to reset to the internal buffer
   /// </summary>
-  void setEncodedBytes(std::vector<uint8_t>* encoded)
+  void setEncodedBytes(const std::vector<uint8_t>* encoded)
   {
     if(encoded == nullptr) {
       encoded_ = &encodedInternal_;
     } else {
-      encoded_ = encoded;
+      encoded_ = const_cast<std::vector<uint8_t> *>(encoded);
     }
   }
 

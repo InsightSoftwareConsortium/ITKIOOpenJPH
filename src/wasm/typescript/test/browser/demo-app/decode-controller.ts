@@ -1,12 +1,11 @@
 // Generated file. To retain edits, remove this comment.
 
-import { writeImageArrayBuffer } from 'itk-wasm'
+import { writeImage } from '@itk-wasm/image-io'
 import { copyImage } from 'itk-wasm'
-import * as htj2k from '../../../dist/bundles/htj2k.js'
+import * as htj2k from '../../../dist/index.js'
 import decodeLoadSampleInputs, { usePreRun } from "./decode-load-sample-inputs.js"
 
 class DecodeModel {
-
   inputs: Map<string, any>
   options: Map<string, any>
   outputs: Map<string, any>
@@ -16,10 +15,10 @@ class DecodeModel {
     this.options = new Map()
     this.outputs = new Map()
     }
-  }
+}
 
 
-class DecodeController  {
+class DecodeController {
 
   constructor(loadSampleInputs) {
     this.loadSampleInputs = loadSampleInputs
@@ -75,10 +74,10 @@ class DecodeController  {
             const imageDownloadFormat = document.getElementById('image-output-format')
             const downloadFormat = imageDownloadFormat.value || 'nrrd'
             const fileName = `image.${downloadFormat}`
-            const { webWorker, arrayBuffer } = await writeImageArrayBuffer(null, copyImage(model.outputs.get("image")), fileName)
+            const { webWorker, serializedImage } = await writeImage(null, copyImage(model.outputs.get("image")), fileName)
 
             webWorker.terminate()
-            globalThis.downloadFile(arrayBuffer, fileName)
+            globalThis.downloadFile(serializedImage, fileName)
         }
     })
 

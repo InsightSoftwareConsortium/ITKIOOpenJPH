@@ -12,7 +12,6 @@ import {
 import EncodeOptions from './encode-options.js'
 import EncodeNodeResult from './encode-node-result.js'
 
-
 import path from 'path'
 
 /**
@@ -96,19 +95,19 @@ async function encodeNode(
     })
   }
 
-  const pipelinePath = path.join(path.dirname(import.meta.url.substring(7)), '..', 'pipelines', 'encode')
+  const pipelinePath = path.join(path.dirname(import.meta.url.substring(7)), 'pipelines', 'encode')
 
   const {
     returnValue,
     stderr,
     outputs
   } = await runPipelineNode(pipelinePath, args, desiredOutputs, inputs)
-  if (returnValue !== 0) {
+  if (returnValue !== 0 && stderr !== "") {
     throw new Error(stderr)
   }
 
   const result = {
-    output: (outputs[0].data as BinaryStream).data,
+    output: (outputs[0]?.data as BinaryStream).data,
   }
   return result
 }

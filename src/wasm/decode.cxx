@@ -21,6 +21,7 @@
 #include "itkImage.h"
 #include "itkVector.h"
 #include "itkVectorImage.h"
+#include "itkWasmExports.h"
 
 #include "ojphInformation.h"
 #include "ojphHTJ2KDecoder.h"
@@ -119,16 +120,8 @@ int main( int argc, char * argv[] )
   // not -h, --help
   if (pipeline.get_argc() > 2)
   {
-    inputCodestream.Get().seekg(0, std::ios::end);
-    const std::streampos streamSize = inputCodestream.Get().tellg();
-    inputCodestream.Get().seekg(0, std::ios::beg);
-
-    inputCodestream.Get().unsetf(std::ios::skipws);
-    std::vector<uint8_t> & encodedBytes = openjphDecoder->getEncodedBytes();
-    encodedBytes.reserve(streamSize);
-    encodedBytes.insert(encodedBytes.begin(),
-                        std::istream_iterator<uint8_t>(inputCodestream.Get()),
-                        std::istream_iterator<uint8_t>());
+    const std::vector<uint8_t> & encodedBytesDirect = itk::wasm::getMemoryInputArrayStore().at({0, 0});
+    openjphDecoder->setEncodedBytes(&encodedBytesDirect);
 
     ITK_WASM_CATCH_EXCEPTION(pipeline, openjphDecoder->readHeader());
 
