@@ -27,6 +27,7 @@
 #include "ojphHTJ2KDecoder.h"
 
 static auto openjphDecoder = std::make_unique<OpenJPH::HTJ2KDecoder>();
+static std::vector<uint8_t> encodedBytes;
 
 template<typename TImage>
 class PipelineFunctor
@@ -120,8 +121,30 @@ int main( int argc, char * argv[] )
   // not -h, --help
   if (pipeline.get_argc() > 2)
   {
-    const std::vector<uint8_t> & encodedBytesDirect = itk::wasm::getMemoryInputArrayStore().at({0, 0});
-    openjphDecoder->setEncodedBytes(&encodedBytesDirect);
+    if (itk::wasm::Pipeline::get_use_memory_io())
+    {
+#ifndef ITK_WASM_NO_MEMORY_IO
+      const std::vector<uint8_t> * encodedBytesDirect = &itk::wasm::getMemoryInputArrayStore().at({0, 0});
+      openjphDecoder->setEncodedBytes(encodedBytesDirect);
+#else
+      std::cerr << "Memory IO attempt when not available." << std::endl;
+      abort();
+#endif
+    }
+    else
+    {
+#ifndef ITK_WASM_NO_FILESYSTEM_IO
+      inputCodestream.Get().seekg(0, std::ios::end);
+      const size_t fileSize = inputCodestream.Get().tellg();
+      inputCodestream.Get().seekg(0, std::ios::beg);
+      encodedBytes.resize(fileSize);
+      inputCodestream.Get().read(reinterpret_cast<char *>(encodedBytes.data()), fileSize);
+      openjphDecoder->setEncodedBytes(&encodedBytes);
+#else
+      std::cerr << "Filesystem IO attempt when not available." << std::endl;
+      abort();
+#endif
+    }
 
     ITK_WASM_CATCH_EXCEPTION(pipeline, openjphDecoder->readHeader());
 
