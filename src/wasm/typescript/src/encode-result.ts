@@ -1,9 +1,8 @@
 // Generated file. To retain edits, remove this comment.
 
-interface EncodeResult {
-  /** WebWorker used for computation */
-  webWorker: Worker | null
+import { WorkerPoolFunctionResult } from 'itk-wasm'
 
+interface EncodeResult extends WorkerPoolFunctionResult {
   /** Output binary HTJ2K codestream */
   output: Uint8Array
 

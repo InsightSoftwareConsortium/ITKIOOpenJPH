@@ -1,22 +1,44 @@
 {
   "name": "@itk-wasm/htj2k-build",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "npm scripts to generate itk-wasm artifacts.",
+  "private": true,
+  "packageManager": "pnpm@9.4.0",
   "type": "module",
+  "itk-wasm": {
+    "emscripten-docker-image": "itkwasm/emscripten:20240624-b89bcb6c",
+    "wasi-docker-image": "itkwasm/wasi:20240624-b89bcb6c",
+    "typescript-package-name": "@itk-wasm/htj2k",
+    "python-package-name": "itkwasm-htj2k",
+    "package-description": "Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 images.",
+    "repository": "https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH"
+  },
   "scripts": {
-    "build": "npm run build:emscripten && npm run build:wasi",
-    "build:emscripten": "itk-wasm -i itkwasm/emscripten:20231026-19713e3a build",
-    "build:emscripten:debug": "itk-wasm -i itkwasm/emscripten:20231026-19713e3a-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
-    "build:wasi": "itk-wasm -i itkwasm/wasi:20231026-19713e3a build",
-    "build:wasi:debug": "itk-wasm -i itkwasm/wasi:20231026-19713e3a-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
-    "bindgen:typescript": "/home/matt/src/itk-wasm/src/itk-wasm-cli.js -b emscripten-build bindgen --package-version 2.1.0 --package-name @itk-wasm/htj2k --package-description \"Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 (HTJ2K) images.\" --repository 'https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH'",
-    "bindgen:python": "itk-wasm -b wasi-build bindgen --package-version 2.1.0 --interface python --package-name itkwasm-htj2k --package-description \"Wasm-SIMD accelerated decoding and encoding High-throughput JPEG2000 (HTJ2K) images.\" --repository \"https://github.com/InsightSoftwareConsortium/ITKIOOpenJPH\"",
-    "test": "npm run test:wasi",
-    "test:wasi": "itk-wasm test",
-    "clean": "git clean -fdx -e node_modules"
+    "build": "pnpm build:gen:typescript && pnpm build:gen:python",
+    "build:emscripten": "itk-wasm pnpm-script build:emscripten",
+    "build:emscripten:debug": "itk-wasm pnpm-script build:emscripten:debug",
+    "build:wasi": "itk-wasm pnpm-script build:wasi",
+    "build:wasi:debug": "itk-wasm pnpm-script build:wasi:debug",
+    "build:python:wasi": "itk-wasm pnpm-script build:python:wasi",
+    "bindgen:typescript": "itk-wasm pnpm-script bindgen:typescript",
+    "bindgen:python": "itk-wasm pnpm-script bindgen:python",
+    "build:gen:typescript": "itk-wasm pnpm-script build:gen:typescript",
+    "build:gen:python": "itk-wasm pnpm-script build:gen:python",
+    "build:micromamba": "itk-wasm pnpm-script build:micromamba",
+    "build:python:versionSync": "itk-wasm pnpm-script build:python:versionSync",
+    "publish:python": "itk-wasm pnpm-script publish:python",
+    "test": "pnpm test:data:download && pnpm build:gen:python && pnpm test:python",
+    "test:data:download": "echo \"Not used\"",
+    "test:data:pack": "dam pack test/data test/data.tar.gz",
+    "test:python:wasi": "itk-wasm pnpm-script test:python:wasi",
+    "test:python:emscripten": "itk-wasm pnpm-script test:python:emscripten",
+    "test:python:dispatch": "itk-wasm pnpm-script test:python:emscripten",
+    "test:python": "itk-wasm pnpm-script test:python",
+    "test:wasi": "itk-wasm pnpm-script test:wasi -- -V"
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "itk-wasm": "^1.0.0-b.155"
+    "@thewtex/setup-micromamba": "^1.9.7",
+    "itk-wasm": "^1.0.0-b.176"
   }
 }

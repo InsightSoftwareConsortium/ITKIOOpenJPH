@@ -1,7 +1,6 @@
 // Generated file. To retain edits, remove this comment.
 
 import { readImage } from '@itk-wasm/image-io'
-import { copyImage } from 'itk-wasm'
 import * as htj2k from '../../../dist/index.js'
 import encodeLoadSampleInputs, { usePreRun } from "./encode-load-sample-inputs.js"
 
@@ -26,8 +25,6 @@ class EncodeController {
     this.model = new EncodeModel()
     const model = this.model
 
-    this.webWorker = null
-
     if (loadSampleInputs) {
       const loadSampleInputsButton = document.querySelector("#encodeInputs [name=loadSampleInputs]")
       loadSampleInputsButton.setAttribute('style', 'display: block-inline;')
@@ -45,11 +42,11 @@ class EncodeController {
         const dataTransfer = event.dataTransfer
         const files = event.target.files || dataTransfer.files
 
-        const { image, webWorker } = await readImage(null, files[0])
+        const { image, webWorker } = await readImage(files[0])
         webWorker.terminate()
         model.inputs.set("image", image)
         const details = document.getElementById("encode-image-details")
-        details.innerHTML = `<pre>${globalThis.escapeHtml(JSON.stringify(image, globalThis.interfaceTypeJsonReplacer, 2))}</pre>`
+        details.setImage(image)
         details.disabled = false
     })
 
@@ -102,7 +99,7 @@ class EncodeController {
     })
 
     const preRun = async () => {
-      if (!this.webWorker && loadSampleInputs && usePreRun) {
+      if (loadSampleInputs && usePreRun) {
         await loadSampleInputs(model, true)
         await this.run()
       }
@@ -166,11 +163,10 @@ class EncodeController {
   }
 
   async run() {
-    const { webWorker, output, } = await htj2k.encode(this.webWorker,
-      copyImage(this.model.inputs.get('image')),
+    const options = Object.fromEntries(this.model.options.entries())
+    const { output, } = await htj2k.encode(      this.model.inputs.get('image'),
       Object.fromEntries(this.model.options.entries())
     )
-    this.webWorker = webWorker
 
     return { output, }
   }

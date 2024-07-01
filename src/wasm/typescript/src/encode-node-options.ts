@@ -1,8 +1,6 @@
 // Generated file. To retain edits, remove this comment.
 
-import { WorkerPoolFunctionOption } from 'itk-wasm'
-
-interface EncodeOptions extends WorkerPoolFunctionOption {
+interface EncodeNodeOptions {
   /** Number of wavelet decompositions */
   decompositions?: number
 
@@ -26,4 +24,4 @@ interface EncodeOptions extends WorkerPoolFunctionOption {
 
 }
 
-export default EncodeOptions
+export default EncodeNodeOptions
