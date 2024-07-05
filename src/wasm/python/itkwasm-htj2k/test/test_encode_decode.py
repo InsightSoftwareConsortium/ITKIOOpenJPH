@@ -1,17 +1,14 @@
 from pathlib import Path
-import itk
+from itkwasm_image_io import imread, imwrite
 from itkwasm import Image
 from itkwasm_compare_images import compare_images
 import numpy as np
 
 def encode_decode_roundtrip(file_path):
     from itkwasm_htj2k import encode, decode
+    image = imread(file_path)
 
-    image = itk.imread(file_path)
-    image_dict = itk.dict_from_image(image)
-    image = Image(**image_dict)
-
-    codestream = encode(image, decompositions=5, tile_size=[256, 256], block_dimensions=[64, 64])
+    codestream = encode(image, decompositions=2, tile_size=[256, 256], block_dimensions=[64, 64])
     decoded_image = decode(codestream)
 
     metrics, _, _ = compare_images(image, baseline_images=[decoded_image,])
