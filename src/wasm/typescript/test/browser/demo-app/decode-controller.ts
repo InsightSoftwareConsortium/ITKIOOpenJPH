@@ -1,7 +1,6 @@
 // Generated file. To retain edits, remove this comment.
 
 import { writeImage } from '@itk-wasm/image-io'
-import { copyImage } from 'itk-wasm'
 import * as htj2k from '../../../dist/index.js'
 import decodeLoadSampleInputs, { usePreRun } from "./decode-load-sample-inputs.js"
 
@@ -25,8 +24,6 @@ class DecodeController {
 
     this.model = new DecodeModel()
     const model = this.model
-
-    this.webWorker = null
 
     if (loadSampleInputs) {
       const loadSampleInputsButton = document.querySelector("#decodeInputs [name=loadSampleInputs]")
@@ -71,18 +68,18 @@ class DecodeController {
         event.preventDefault()
         event.stopPropagation()
         if (model.outputs.has("image")) {
-            const imageDownloadFormat = document.getElementById('image-output-format')
+            const imageDownloadFormat = document.getElementById('decode-image-output-format')
             const downloadFormat = imageDownloadFormat.value || 'nrrd'
             const fileName = `image.${downloadFormat}`
-            const { webWorker, serializedImage } = await writeImage(null, copyImage(model.outputs.get("image")), fileName)
+            const { webWorker, serializedImage } = await writeImage(model.outputs.get("image"), fileName)
 
             webWorker.terminate()
-            globalThis.downloadFile(serializedImage, fileName)
+            globalThis.downloadFile(serializedImage.data, fileName)
         }
     })
 
     const preRun = async () => {
-      if (!this.webWorker && loadSampleInputs && usePreRun) {
+      if (loadSampleInputs && usePreRun) {
         await loadSampleInputs(model, true)
         await this.run()
       }
@@ -134,9 +131,8 @@ class DecodeController {
         imageOutputDownload.variant = "success"
         imageOutputDownload.disabled = false
         const imageDetails = document.getElementById("decode-image-details")
-        imageDetails.innerHTML = `<pre>${globalThis.escapeHtml(JSON.stringify(image, globalThis.interfaceTypeJsonReplacer, 2))}</pre>`
         imageDetails.disabled = false
-        const imageOutput = document.getElementById('decode-image-details')
+        imageDetails.setImage(image)
       } catch (error) {
         globalThis.notify("Error while running pipeline", error.toString(), "danger", "exclamation-octagon")
         throw error
@@ -147,11 +143,10 @@ class DecodeController {
   }
 
   async run() {
-    const { webWorker, image, } = await htj2k.decode(this.webWorker,
-      this.model.inputs.get('codestream').slice(),
+    const options = Object.fromEntries(this.model.options.entries())
+    const { image, } = await htj2k.decode(      this.model.inputs.get('codestream').slice(),
       Object.fromEntries(this.model.options.entries())
     )
-    this.webWorker = webWorker
 
     return { image, }
   }

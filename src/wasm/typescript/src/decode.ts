@@ -14,6 +14,8 @@ import DecodeResult from './decode-result.js'
 import { getPipelinesBaseUrl } from './pipelines-base-url.js'
 import { getPipelineWorkerUrl } from './pipeline-worker-url.js'
 
+import { getDefaultWebWorker } from './default-web-worker.js'
+
 /**
  * Decode a High Throughput JPEG2000 codestream and generate an ITK Image
  *
@@ -23,7 +25,6 @@ import { getPipelineWorkerUrl } from './pipeline-worker-url.js'
  * @returns {Promise<DecodeResult>} - result object
  */
 async function decode(
-  webWorker: null | Worker | boolean,
   codestream: Uint8Array,
   options: DecodeOptions = {}
 ) : Promise<DecodeResult> {
@@ -47,22 +48,26 @@ async function decode(
 
   // Options
   args.push('--memory-io')
-  if (typeof options.decompositionLevel !== "undefined") {
+  if (options.decompositionLevel) {
     args.push('--decomposition-level', options.decompositionLevel.toString())
 
   }
-  if (typeof options.informationOnly !== "undefined") {
+  if (options.informationOnly) {
     options.informationOnly && args.push('--information-only')
   }
 
   const pipelinePath = 'decode'
 
+  let workerToUse = options?.webWorker
+  if (workerToUse === undefined) {
+    workerToUse = await getDefaultWebWorker()
+  }
   const {
     webWorker: usedWebWorker,
     returnValue,
     stderr,
     outputs
-  } = await runPipeline(webWorker, pipelinePath, args, desiredOutputs, inputs, { pipelineBaseUrl: getPipelinesBaseUrl(), pipelineWorkerUrl: getPipelineWorkerUrl() })
+  } = await runPipeline(pipelinePath, args, desiredOutputs, inputs, { pipelineBaseUrl: getPipelinesBaseUrl(), pipelineWorkerUrl: getPipelineWorkerUrl(), webWorker: workerToUse, noCopy: options?.noCopy })
   if (returnValue !== 0 && stderr !== "") {
     throw new Error(stderr)
   }

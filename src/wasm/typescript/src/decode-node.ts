@@ -8,22 +8,23 @@ import {
   runPipelineNode
 } from 'itk-wasm'
 
-import DecodeOptions from './decode-options.js'
+import DecodeNodeOptions from './decode-node-options.js'
 import DecodeNodeResult from './decode-node-result.js'
 
 import path from 'path'
+import { fileURLToPath } from 'url'
 
 /**
  * Decode a High Throughput JPEG2000 codestream and generate an ITK Image
  *
  * @param {Uint8Array} codestream - Input HTJ2K codestream
- * @param {DecodeOptions} options - options object
+ * @param {DecodeNodeOptions} options - options object
  *
  * @returns {Promise<DecodeNodeResult>} - result object
  */
 async function decodeNode(
   codestream: Uint8Array,
-  options: DecodeOptions = {}
+  options: DecodeNodeOptions = {}
 ) : Promise<DecodeNodeResult> {
 
   const desiredOutputs: Array<PipelineOutput> = [
@@ -45,15 +46,15 @@ async function decodeNode(
 
   // Options
   args.push('--memory-io')
-  if (typeof options.decompositionLevel !== "undefined") {
+  if (options.decompositionLevel) {
     args.push('--decomposition-level', options.decompositionLevel.toString())
 
   }
-  if (typeof options.informationOnly !== "undefined") {
+  if (options.informationOnly) {
     options.informationOnly && args.push('--information-only')
   }
 
-  const pipelinePath = path.join(path.dirname(import.meta.url.substring(7)), 'pipelines', 'decode')
+  const pipelinePath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'pipelines', 'decode')
 
   const {
     returnValue,

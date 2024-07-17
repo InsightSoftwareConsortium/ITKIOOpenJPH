@@ -15,9 +15,9 @@ async def encode_async(
     not_reversible: bool = False,
     quantization_step: float = 1,
     progression_order: int = 2,
-    tile_size: List[int] = [512,512],
-    tile_offset: List[int] = [0,0],
-    block_dimensions: List[int] = [64,64],
+    tile_size: Optional[List[int]] = None,
+    tile_offset: Optional[List[int]] = None,
+    block_dimensions: Optional[List[int]] = None,
 ) -> bytes:
     """Encode an ITK Image into a High Throughput JPEG2000 codestream
 

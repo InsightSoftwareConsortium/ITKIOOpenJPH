@@ -9,22 +9,23 @@ import {
   runPipelineNode
 } from 'itk-wasm'
 
-import EncodeOptions from './encode-options.js'
+import EncodeNodeOptions from './encode-node-options.js'
 import EncodeNodeResult from './encode-node-result.js'
 
 import path from 'path'
+import { fileURLToPath } from 'url'
 
 /**
  * Encode an ITK Image into a High Throughput JPEG2000 codestream
  *
  * @param {Image} image - Input image
- * @param {EncodeOptions} options - options object
+ * @param {EncodeNodeOptions} options - options object
  *
  * @returns {Promise<EncodeNodeResult>} - result object
  */
 async function encodeNode(
   image: Image,
-  options: EncodeOptions = {}
+  options: EncodeNodeOptions = {}
 ) : Promise<EncodeNodeResult> {
 
   const desiredOutputs: Array<PipelineOutput> = [
@@ -46,22 +47,22 @@ async function encodeNode(
 
   // Options
   args.push('--memory-io')
-  if (typeof options.decompositions !== "undefined") {
+  if (options.decompositions) {
     args.push('--decompositions', options.decompositions.toString())
 
   }
-  if (typeof options.notReversible !== "undefined") {
+  if (options.notReversible) {
     options.notReversible && args.push('--not-reversible')
   }
-  if (typeof options.quantizationStep !== "undefined") {
+  if (options.quantizationStep) {
     args.push('--quantization-step', options.quantizationStep.toString())
 
   }
-  if (typeof options.progressionOrder !== "undefined") {
+  if (options.progressionOrder) {
     args.push('--progression-order', options.progressionOrder.toString())
 
   }
-  if (typeof options.tileSize !== "undefined") {
+  if (options.tileSize) {
     if(options.tileSize.length < 2) {
       throw new Error('"tile-size" option must have a length > 2')
     }
@@ -72,7 +73,7 @@ async function encodeNode(
 
     })
   }
-  if (typeof options.tileOffset !== "undefined") {
+  if (options.tileOffset) {
     if(options.tileOffset.length < 2) {
       throw new Error('"tile-offset" option must have a length > 2')
     }
@@ -83,7 +84,7 @@ async function encodeNode(
 
     })
   }
-  if (typeof options.blockDimensions !== "undefined") {
+  if (options.blockDimensions) {
     if(options.blockDimensions.length < 2) {
       throw new Error('"block-dimensions" option must have a length > 2')
     }
@@ -95,7 +96,7 @@ async function encodeNode(
     })
   }
 
-  const pipelinePath = path.join(path.dirname(import.meta.url.substring(7)), 'pipelines', 'encode')
+  const pipelinePath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'pipelines', 'encode')
 
   const {
     returnValue,

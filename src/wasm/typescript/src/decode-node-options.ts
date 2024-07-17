@@ -1,8 +1,6 @@
 // Generated file. To retain edits, remove this comment.
 
-import { WorkerPoolFunctionOption } from 'itk-wasm'
-
-interface DecodeOptions extends WorkerPoolFunctionOption {
+interface DecodeNodeOptions {
   /** Decomposition level to decode. 0 is the highest resolution. */
   decompositionLevel?: number
 
@@ -11,4 +9,4 @@ interface DecodeOptions extends WorkerPoolFunctionOption {
 
 }
 
-export default DecodeOptions
+export default DecodeNodeOptions
