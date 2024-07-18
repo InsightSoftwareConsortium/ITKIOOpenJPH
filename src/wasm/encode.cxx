@@ -152,6 +152,7 @@ int main( int argc, char * argv[] )
     uint8_t,
     itk::Vector<uint8_t, 4>,
     itk::RGBAPixel<uint8_t>,
+    itk::RGBPixel<uint8_t>,
     int8_t,
     uint16_t,
     int16_t>::Dimensions<2U>("image", pipeline);

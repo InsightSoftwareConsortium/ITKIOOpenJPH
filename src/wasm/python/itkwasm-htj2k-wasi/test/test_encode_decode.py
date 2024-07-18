@@ -20,6 +20,12 @@ def test_encode_decode_rgba():
 
     encode_decode_roundtrip(input_file_path)
 
+def test_encode_decode_rgb():
+    input_file = 'itk_logo_rgb.png'
+    input_file_path = Path('..', '..', 'test', 'data', 'input', input_file)
+
+    encode_decode_roundtrip(input_file_path)
+
 def test_encode_decode_short():
     input_file = 'CT1.mha'
     input_file_path = Path('..', '..', 'test', 'data', 'input', input_file)
