@@ -1,28 +1,30 @@
 {
   "name": "@itk-wasm/htj2k",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 (HTJ2K) images.",
   "type": "module",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index-all.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index-all.d.ts",
       "browser": "./dist/index.js",
       "node": "./dist/index-node.js",
-      "default": "./dist/index.js"
+      "default": "./dist/index-all.js"
     }
   },
   "scripts": {
-    "start": "npm run copyShoelaceAssets && vite -c build/vite.config.js",
+    "start": "pnpm copyDemoAppAssets && vite",
     "test": "npm run test:node",
     "test:node": "ava test/node/**.js",
-    "build": "npm run build:tsc && npm run build:browser:workerEmbedded && npm run build:browser:workerEmbeddedMin && npm run build:demo",
+    "copyDemoAppAssets": "shx mkdir -p test/browser/demo-app/public/shoelace && shx cp -r node_modules/@itk-wasm/demo-app/dist/assets test/browser/demo-app/public/",
+    "build": "pnpm build:tsc && pnpm build:browser:workerEmbedded && pnpm build:browser:workerEmbeddedMin && pnpm build:demo",
+    "build:version": "node -p \"'const version = ' + JSON.stringify(require('./package.json').version) + '\\nexport default version\\n'\" > src/version.ts",
+    "copyShoelaceAssets": "shx mkdir -p test/browser/demo-app/public && shx cp -r node_modules/@shoelace-style/shoelace/dist/assets test/browser/demo-app/public/",
     "build:browser:workerEmbedded": "esbuild --loader:.worker.js=dataurl --bundle --format=esm --outfile=./dist/bundle/index-worker-embedded.js ./src/index-worker-embedded.ts",
     "build:browser:workerEmbeddedMin": "esbuild --minify --loader:.worker.js=dataurl --bundle --format=esm --outfile=./dist/bundle/index-worker-embedded.min.js ./src/index-worker-embedded.min.ts",
-    "build:tsc": "tsc --pretty",
-    "copyShoelaceAssets": "shx mkdir -p test/browser/demo-app/public && shx cp -r node_modules/@shoelace-style/shoelace/dist/assets test/browser/demo-app/public/",
-    "build:demo": "npm run copyShoelaceAssets && vite -c build/vite.config.js build"
+    "build:tsc": "pnpm build:version && tsc --pretty",
+    "build:demo": "pnpm copyDemoAppAssets && vite build"
   },
   "keywords": [
     "itk",
@@ -36,15 +38,15 @@
     "itk-wasm": "^1.0.0-b.177"
   },
   "devDependencies": {
-    "@itk-wasm/image-io": "^0.5.0",
-    "@shoelace-style/shoelace": "^2.5.2",
+    "@itk-wasm/demo-app": "^0.2.0",
+    "@itk-wasm/image-io": "^1.2.1",
     "@types/node": "^20.2.5",
     "ava": "^5.3.1",
     "esbuild": "^0.19.5",
     "shx": "^0.3.4",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.3",
-    "vite-plugin-static-copy": "^0.14.0"
+    "typescript": "^5.4.3",
+    "vite": "^4.4.11",
+    "vite-plugin-static-copy": "^0.17.0"
   },
   "repository": {
     "type": "git",

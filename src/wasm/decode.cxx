@@ -181,6 +181,12 @@ int main( int argc, char * argv[] )
         using PipelineType = PipelineFunctor<ImageType>;
         return PipelineType()(pipeline);
       }
+      else if(frameInfo.componentCount == 3)
+      {
+        using ImageType = itk::Image<itk::Vector<uint8_t, 3>, Dimension>;
+        using PipelineType = PipelineFunctor<ImageType>;
+        return PipelineType()(pipeline);
+      }
       else if(frameInfo.componentCount == 4)
       {
         using ImageType = itk::Image<itk::Vector<uint8_t, 4>, Dimension>;

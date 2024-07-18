@@ -1,8 +1,6 @@
 from pathlib import Path
-from itkwasm_image_io import imread, imwrite
-from itkwasm import Image
+from itkwasm_image_io import imread
 from itkwasm_compare_images import compare_images
-import numpy as np
 
 def encode_decode_roundtrip(file_path):
     from itkwasm_htj2k import encode, decode

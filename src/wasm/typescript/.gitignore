@@ -1,3 +1,4 @@
 demo-app/
 dist/
 test/browser/demo-app/public/
+src/version.ts
