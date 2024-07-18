@@ -1,6 +1,6 @@
 {
   "name": "@itk-wasm/htj2k",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 (HTJ2K) images.",
   "type": "module",
   "module": "./dist/index.js",
