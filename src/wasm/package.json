@@ -6,8 +6,8 @@
   "packageManager": "pnpm@9.4.0",
   "type": "module",
   "itk-wasm": {
-    "emscripten-docker-image": "itkwasm/emscripten:20240716-adc24a6a",
-    "wasi-docker-image": "itkwasm/wasi:20240716-adc24a6a",
+    "emscripten-docker-image": "itkwasm/emscripten:20240717-6891d4df",
+    "wasi-docker-image": "itkwasm/wasi:20240717-6891d4df",
     "typescript-package-name": "@itk-wasm/htj2k",
     "python-package-name": "itkwasm-htj2k",
     "package-description": "Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 images.",
