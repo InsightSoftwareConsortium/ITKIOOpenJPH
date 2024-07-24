@@ -45,7 +45,7 @@ async def decode_async(
     if information_only:
         kwargs["informationOnly"] = to_js(information_only)
 
-    outputs = await js_module.decode(web_worker, to_js(codestream), **kwargs)
+    outputs = await js_module.decode(to_js(codestream), webWorker=web_worker, noCopy=True, **kwargs)
 
     output_web_worker = None
     output_list = []
