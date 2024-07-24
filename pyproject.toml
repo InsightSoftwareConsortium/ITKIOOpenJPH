@@ -6,7 +6,7 @@ build-backend = "scikit_build_core.build"
 name = "itk-ioopenjph"
 version = "1.3.0"
 description = "An ITK module to read and write High-throughput JPEG2000 (HTJ2K) images."
-readme = "README.rst"
+readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
     { name = "Matthew M. McCormick", email = "matt.mccormick@kitware.com" },
