@@ -1,6 +1,6 @@
 {
   "name": "@itk-wasm/htj2k",
-  "version": "2.2.0",
+  "version": "2.3.1",
   "description": "Wasm-SIMD accelerated decoding and encoding of High-throughput JPEG2000 (HTJ2K) images.",
   "type": "module",
   "module": "./dist/index.js",
@@ -15,15 +15,13 @@
   },
   "scripts": {
     "start": "pnpm copyDemoAppAssets && vite",
-    "test": "npm run test:node",
+    "test": "pnpm run test:node",
     "test:node": "ava test/node/**.js",
     "copyDemoAppAssets": "shx mkdir -p test/browser/demo-app/public/shoelace && shx cp -r node_modules/@itk-wasm/demo-app/dist/assets test/browser/demo-app/public/",
     "build": "pnpm build:tsc && pnpm build:browser:workerEmbedded && pnpm build:browser:workerEmbeddedMin && pnpm build:demo",
-    "build:version": "node -p \"'const version = ' + JSON.stringify(require('./package.json').version) + '\\nexport default version\\n'\" > src/version.ts",
-    "copyShoelaceAssets": "shx mkdir -p test/browser/demo-app/public && shx cp -r node_modules/@shoelace-style/shoelace/dist/assets test/browser/demo-app/public/",
     "build:browser:workerEmbedded": "esbuild --loader:.worker.js=dataurl --bundle --format=esm --outfile=./dist/bundle/index-worker-embedded.js ./src/index-worker-embedded.ts",
     "build:browser:workerEmbeddedMin": "esbuild --minify --loader:.worker.js=dataurl --bundle --format=esm --outfile=./dist/bundle/index-worker-embedded.min.js ./src/index-worker-embedded.min.ts",
-    "build:tsc": "pnpm build:version && tsc --pretty",
+    "build:tsc": "tsc --pretty",
     "build:demo": "pnpm copyDemoAppAssets && vite build"
   },
   "keywords": [

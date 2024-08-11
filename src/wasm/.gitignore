@@ -4,3 +4,6 @@ package-lock.json
 wasi-build
 micromamba/
 python/itkwasm-htj2k-wasi/tests/
+# pixi environments
+.pixi
+*.egg-info
